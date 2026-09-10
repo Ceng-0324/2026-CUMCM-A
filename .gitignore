@@ -1,0 +1,36 @@
+# Operating system and Python caches
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
+.venv/
+.uv-cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Local settings and private credentials
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+
+# Local scratch outputs. Reviewed small JSON evidence remains tracked.
+/results/local/
+/scratch/
+*.log
+
+# Paper intermediates; PDFs and scientific figures may be tracked deliberately.
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.synctex.gz
+*.toc

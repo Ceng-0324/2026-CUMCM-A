@@ -1,0 +1,643 @@
+{
+  "assumptions": {
+    "dt_hours": 0.16666666666666666,
+    "price_load_pv_samples": "right endpoint held over preceding ten minutes",
+    "efficiency_each": 0.9,
+    "spill": "free, no sale",
+    "Q2_forecast": "previous 1..7 days same-time mean net load",
+    "Q2_terminal_target_kWh": 6000,
+    "Q2_execution": "use scheduled discharge cap; absorb realized surplus; emergency fills deficit",
+    "Q2_cold_start": "Jan 1 no advance purchase, observed deficits emergency only",
+    "Q2_scope": "Jan warm-up plus Feb 1..7, no tuning, no Q3/Q4 dispatch"
+  },
+  "Q1": {
+    "cost": 35126.948589289634,
+    "grid_kWh": 59482.69899835391,
+    "spill_kWh": 0.0,
+    "checks": {
+      "max_equality_residual": 9.094947017729282e-13,
+      "SOC_min": 1200.0,
+      "SOC_max": 10800.0,
+      "terminal_SOC": 6000.0,
+      "simultaneous_charge_discharge_kW": 0.0
+    },
+    "no_battery_cost": 48052.046590846665,
+    "elapsed_s": 0.00580245815217495
+  },
+  "Q2_probe": {
+    "days": [
+      {
+        "date": "2025-01-01",
+        "training_last_date": null,
+        "initial_SOC": 6000,
+        "final_SOC": 6000.0,
+        "planned_cost": 0,
+        "emergency_kWh": 92035.17001666664,
+        "emergency_cost": 366613.56615685835,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 6000.0,
+          "SOC_max": 6000.0,
+          "max_charge_kW": 0.0,
+          "max_discharge_kW": 0.0
+        }
+      },
+      {
+        "date": "2025-01-02",
+        "training_last_date": "2025-01-01",
+        "initial_SOC": 6000.0,
+        "final_SOC": 6273.839888703704,
+        "planned_cost": 61778.21238317949,
+        "emergency_kWh": 1756.329466666667,
+        "emergency_cost": 7695.843827441667,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1217.673148148149,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 5000.0
+        }
+      },
+      {
+        "date": "2025-01-03",
+        "training_last_date": "2025-01-02",
+        "initial_SOC": 6273.839888703704,
+        "final_SOC": 10800.0,
+        "planned_cost": 62015.878451422446,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4883.589796296295,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3022.4875
+        }
+      },
+      {
+        "date": "2025-01-04",
+        "training_last_date": "2025-01-03",
+        "initial_SOC": 10800.0,
+        "final_SOC": 10593.506285679014,
+        "planned_cost": 47301.941533851576,
+        "emergency_kWh": 78.17444444444443,
+        "emergency_cost": 167.1369622222222,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4244.802505679013,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3321.9
+        }
+      },
+      {
+        "date": "2025-01-05",
+        "training_last_date": "2025-01-04",
+        "initial_SOC": 10593.506285679014,
+        "final_SOC": 5603.264355,
+        "planned_cost": 41165.18285795802,
+        "emergency_kWh": 21246.48640091666,
+        "emergency_cost": 101022.04249617054,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10760.06244,
+          "max_charge_kW": 4719.742175,
+          "max_discharge_kW": 4477.0502
+        }
+      },
+      {
+        "date": "2025-01-06",
+        "training_last_date": "2025-01-05",
+        "initial_SOC": 5603.264355,
+        "final_SOC": 5610.365949,
+        "planned_cost": 47033.95508710639,
+        "emergency_kWh": 16414.008768266667,
+        "emergency_cost": 80757.18057159208,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10395.034467000001,
+          "max_charge_kW": 4763.1324,
+          "max_discharge_kW": 4707.005780000001
+        }
+      },
+      {
+        "date": "2025-01-07",
+        "training_last_date": "2025-01-06",
+        "initial_SOC": 5610.365949,
+        "final_SOC": 5738.6117975,
+        "planned_cost": 49339.055848962955,
+        "emergency_kWh": 15459.654463222227,
+        "emergency_cost": 77229.45800065699,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10504.914507500001,
+          "max_charge_kW": 4991.313333333333,
+          "max_discharge_kW": 4839.683600000001
+        }
+      },
+      {
+        "date": "2025-01-08",
+        "training_last_date": "2025-01-07",
+        "initial_SOC": 5738.6117975,
+        "final_SOC": 5828.169769285715,
+        "planned_cost": 51118.209147707326,
+        "emergency_kWh": 10637.382619761907,
+        "emergency_cost": 50301.52512894323,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10580.366509285712,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4905.428385714286
+        }
+      },
+      {
+        "date": "2025-01-09",
+        "training_last_date": "2025-01-08",
+        "initial_SOC": 5828.169769285715,
+        "final_SOC": 5799.887003571429,
+        "planned_cost": 50849.81708651978,
+        "emergency_kWh": 12279.241027333324,
+        "emergency_cost": 60084.83110639296,
+        "checks": {
+          "max_power_residual_kW": 9.094947017729282e-13,
+          "SOC_min": 1200.0,
+          "SOC_max": 10519.034586428572,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4917.579614285714
+        }
+      },
+      {
+        "date": "2025-01-10",
+        "training_last_date": "2025-01-09",
+        "initial_SOC": 5799.887003571429,
+        "final_SOC": 10800.0,
+        "planned_cost": 50690.2587135457,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4535.3356154497305,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3496.1253
+        }
+      },
+      {
+        "date": "2025-01-11",
+        "training_last_date": "2025-01-10",
+        "initial_SOC": 10800.0,
+        "final_SOC": 10800.0,
+        "planned_cost": 48389.670145007556,
+        "emergency_kWh": 60.0204761904763,
+        "emergency_cost": 128.32377809523834,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4417.260691428572,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3410.3538000000003
+        }
+      },
+      {
+        "date": "2025-01-12",
+        "training_last_date": "2025-01-11",
+        "initial_SOC": 10800.0,
+        "final_SOC": 5707.986752142857,
+        "planned_cost": 48365.11761593365,
+        "emergency_kWh": 12214.075950261898,
+        "emergency_cost": 59200.14934046503,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 4948.725714285714,
+          "max_discharge_kW": 4933.502385714286
+        }
+      },
+      {
+        "date": "2025-01-13",
+        "training_last_date": "2025-01-12",
+        "initial_SOC": 5707.986752142857,
+        "final_SOC": 5606.875667142856,
+        "planned_cost": 50685.70059270886,
+        "emergency_kWh": 9708.121824642856,
+        "emergency_cost": 46253.43435036802,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10572.421725,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4924.346928571428
+        }
+      },
+      {
+        "date": "2025-01-14",
+        "training_last_date": "2025-01-13",
+        "initial_SOC": 5606.875667142856,
+        "final_SOC": 5622.583810714285,
+        "planned_cost": 50459.679437403734,
+        "emergency_kWh": 11047.634523404764,
+        "emergency_cost": 52730.81587029555,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10515.152245714286,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4918.467014285715
+        }
+      },
+      {
+        "date": "2025-01-15",
+        "training_last_date": "2025-01-14",
+        "initial_SOC": 5622.583810714285,
+        "final_SOC": 5730.362419285714,
+        "planned_cost": 50118.96618951517,
+        "emergency_kWh": 12329.997376309528,
+        "emergency_cost": 61069.82374876383,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10529.83693714286,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4946.0994
+        }
+      },
+      {
+        "date": "2025-01-16",
+        "training_last_date": "2025-01-15",
+        "initial_SOC": 5730.362419285714,
+        "final_SOC": 5758.294163571429,
+        "planned_cost": 50131.46119259409,
+        "emergency_kWh": 11361.176297738093,
+        "emergency_cost": 55302.130168789205,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10590.874270714288,
+          "max_charge_kW": 4974.284285714286,
+          "max_discharge_kW": 4936.149785714285
+        }
+      },
+      {
+        "date": "2025-01-17",
+        "training_last_date": "2025-01-16",
+        "initial_SOC": 5758.294163571429,
+        "final_SOC": 10800.0,
+        "planned_cost": 49917.324859421744,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4506.641332142859,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3266.7995
+        }
+      },
+      {
+        "date": "2025-01-18",
+        "training_last_date": "2025-01-17",
+        "initial_SOC": 10800.0,
+        "final_SOC": 10800.0,
+        "planned_cost": 47244.8847133447,
+        "emergency_kWh": 87.54595238095241,
+        "emergency_cost": 187.17324619047622,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4599.198005793652,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3375.47
+        }
+      },
+      {
+        "date": "2025-01-19",
+        "training_last_date": "2025-01-18",
+        "initial_SOC": 10800.0,
+        "final_SOC": 5767.803329999999,
+        "planned_cost": 47025.56068980714,
+        "emergency_kWh": 11926.445980095237,
+        "emergency_cost": 57202.172029960675,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 4961.039999999999,
+          "max_discharge_kW": 4891.011528571428
+        }
+      },
+      {
+        "date": "2025-01-20",
+        "training_last_date": "2025-01-19",
+        "initial_SOC": 5767.803329999999,
+        "final_SOC": 5816.370803571428,
+        "planned_cost": 49175.09654161117,
+        "emergency_kWh": 11628.955619523806,
+        "emergency_cost": 56929.330544405944,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10496.185497857143,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4865.5545142857145
+        }
+      },
+      {
+        "date": "2025-01-21",
+        "training_last_date": "2025-01-20",
+        "initial_SOC": 5816.370803571428,
+        "final_SOC": 5835.245571428571,
+        "planned_cost": 49162.85514222205,
+        "emergency_kWh": 8079.974497071431,
+        "emergency_cost": 37152.00853386673,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10478.911767857142,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4864.528042857143
+        }
+      },
+      {
+        "date": "2025-01-22",
+        "training_last_date": "2025-01-21",
+        "initial_SOC": 5835.245571428571,
+        "final_SOC": 5665.023767142858,
+        "planned_cost": 48567.24523880237,
+        "emergency_kWh": 13002.818218880946,
+        "emergency_cost": 64102.199346932226,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10608.68073857143,
+          "max_charge_kW": 4997.457085714286,
+          "max_discharge_kW": 4868.477142857142
+        }
+      },
+      {
+        "date": "2025-01-23",
+        "training_last_date": "2025-01-22",
+        "initial_SOC": 5665.023767142858,
+        "final_SOC": 5734.662735,
+        "planned_cost": 48501.399746122865,
+        "emergency_kWh": 13737.203228666664,
+        "emergency_cost": 69512.82904743247,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10461.815355000002,
+          "max_charge_kW": 4774.214285714286,
+          "max_discharge_kW": 4873.134271428571
+        }
+      },
+      {
+        "date": "2025-01-24",
+        "training_last_date": "2025-01-23",
+        "initial_SOC": 5734.662735,
+        "final_SOC": 10800.0,
+        "planned_cost": 48474.8507449949,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4612.123734947087,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3386.3735
+        }
+      },
+      {
+        "date": "2025-01-25",
+        "training_last_date": "2025-01-24",
+        "initial_SOC": 10800.0,
+        "final_SOC": 10800.0,
+        "planned_cost": 45855.85434709167,
+        "emergency_kWh": 9.63690476190474,
+        "emergency_cost": 20.603702380952335,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4409.311952989421,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3336.766
+        }
+      },
+      {
+        "date": "2025-01-26",
+        "training_last_date": "2025-01-25",
+        "initial_SOC": 10800.0,
+        "final_SOC": 5680.350362142856,
+        "planned_cost": 45371.41299184289,
+        "emergency_kWh": 12959.042118166675,
+        "emergency_cost": 63543.70636420025,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 4907.315714285714,
+          "max_discharge_kW": 4875.337114285715
+        }
+      },
+      {
+        "date": "2025-01-27",
+        "training_last_date": "2025-01-26",
+        "initial_SOC": 5680.350362142856,
+        "final_SOC": 5639.980125000001,
+        "planned_cost": 47584.842523119296,
+        "emergency_kWh": 9786.02148847619,
+        "emergency_cost": 46986.99500282883,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10609.046661428572,
+          "max_charge_kW": 4957.443957142857,
+          "max_discharge_kW": 4880.058128571429
+        }
+      },
+      {
+        "date": "2025-01-28",
+        "training_last_date": "2025-01-27",
+        "initial_SOC": 5639.980125000001,
+        "final_SOC": 5758.594504285713,
+        "planned_cost": 47154.24425549016,
+        "emergency_kWh": 13086.947953065259,
+        "emergency_cost": 64229.81279448892,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10512.082219285712,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4889.5116285714275
+        }
+      },
+      {
+        "date": "2025-01-29",
+        "training_last_date": "2025-01-28",
+        "initial_SOC": 5758.594504285713,
+        "final_SOC": 5745.320046428571,
+        "planned_cost": 47415.98112460443,
+        "emergency_kWh": 7262.422660523811,
+        "emergency_cost": 34510.00383622721,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10514.989450714285,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4905.009071428572
+        }
+      },
+      {
+        "date": "2025-01-30",
+        "training_last_date": "2025-01-29",
+        "initial_SOC": 5745.320046428571,
+        "final_SOC": 5857.276761428571,
+        "planned_cost": 46574.182351363335,
+        "emergency_kWh": 10812.993200357145,
+        "emergency_cost": 53153.379715331364,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10566.619774285715,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4867.028557142857
+        }
+      },
+      {
+        "date": "2025-01-31",
+        "training_last_date": "2025-01-30",
+        "initial_SOC": 5857.276761428571,
+        "final_SOC": 10800.0,
+        "planned_cost": 45956.67342323013,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4644.603210264547,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3424.7698
+        }
+      },
+      {
+        "date": "2025-02-01",
+        "training_last_date": "2025-01-31",
+        "initial_SOC": 10800.0,
+        "final_SOC": 10800.0,
+        "planned_cost": 43507.1349965426,
+        "emergency_kWh": 30.414999999999964,
+        "emergency_cost": 65.02726999999992,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4743.502271243389,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3211.1231
+        }
+      },
+      {
+        "date": "2025-02-02",
+        "training_last_date": "2025-02-01",
+        "initial_SOC": 10800.0,
+        "final_SOC": 5863.710280714286,
+        "planned_cost": 43104.57400914644,
+        "emergency_kWh": 7192.613577476192,
+        "emergency_cost": 35232.92943880841,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4852.381114285714
+        }
+      },
+      {
+        "date": "2025-02-03",
+        "training_last_date": "2025-02-02",
+        "initial_SOC": 5863.710280714286,
+        "final_SOC": 5804.520617142857,
+        "planned_cost": 44472.79832362544,
+        "emergency_kWh": 9971.86407440476,
+        "emergency_cost": 49208.77502525875,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10653.466234285712,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4817.8946
+        }
+      },
+      {
+        "date": "2025-02-04",
+        "training_last_date": "2025-02-03",
+        "initial_SOC": 5804.520617142857,
+        "final_SOC": 5684.785967142858,
+        "planned_cost": 44111.81304985196,
+        "emergency_kWh": 11358.626202690468,
+        "emergency_cost": 56274.03330909901,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10693.274048571428,
+          "max_charge_kW": 4983.950942857143,
+          "max_discharge_kW": 4777.967742857143
+        }
+      },
+      {
+        "date": "2025-02-05",
+        "training_last_date": "2025-02-04",
+        "initial_SOC": 5684.785967142858,
+        "final_SOC": 5755.114656428572,
+        "planned_cost": 43618.26274249968,
+        "emergency_kWh": 11683.540791809524,
+        "emergency_cost": 58444.41844252657,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10534.832957142859,
+          "max_charge_kW": 4980.051428571429,
+          "max_discharge_kW": 4737.338000000001
+        }
+      },
+      {
+        "date": "2025-02-06",
+        "training_last_date": "2025-02-05",
+        "initial_SOC": 5755.114656428572,
+        "final_SOC": 5779.862406428571,
+        "planned_cost": 43550.3350555996,
+        "emergency_kWh": 11322.843333047625,
+        "emergency_cost": 56971.93260054044,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 1200.0,
+          "SOC_max": 10555.90143642857,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 4746.196914285714
+        }
+      },
+      {
+        "date": "2025-02-07",
+        "training_last_date": "2025-02-06",
+        "initial_SOC": 5779.862406428571,
+        "final_SOC": 10800.0,
+        "planned_cost": 43140.630981251044,
+        "emergency_kWh": 0.0,
+        "emergency_cost": 0.0,
+        "checks": {
+          "max_power_residual_kW": 0.0,
+          "SOC_min": 4412.469836243388,
+          "SOC_max": 10800.0,
+          "max_charge_kW": 5000.0,
+          "max_discharge_kW": 3146.1675
+        }
+      }
+    ],
+    "February_week_planned_cost": 305505.54915851675,
+    "February_week_emergency_cost": 256197.11608623317,
+    "February_week_emergency_kWh": 51559.902979428574
+  },
+  "scope": "Feasible baseline only, not a competitive or optimal annual policy"
+}

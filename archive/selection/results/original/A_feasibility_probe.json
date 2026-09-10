@@ -1,0 +1,431 @@
+{
+  "assumptions": [
+    "1D radial cylinder; no axial/latent heat terms",
+    "thermal empirical density only used in heat capacity; not asserted as dry skeleton density",
+    "homogeneous contracting dry skeleton, constant material dry-mass weights",
+    "bulk Robin mass coefficient assumed inherited for all problems",
+    "room concentration used as effective surface-equilibrium concentration",
+    "radius linear interpolation; held constant beyond 72h if required",
+    "Kirchhoff flux for nonlinear moisture; BDF integration",
+    "Only conditional feasibility; no claim of unique official model or four-decimal accuracy"
+  ],
+  "analytic_checks": [
+    {
+      "n": 32,
+      "max_error": 7.639155527494612e-05,
+      "type": "constant diffusion cylinder Robin eigenmode"
+    },
+    {
+      "n": 64,
+      "max_error": 1.9101492214790294e-05,
+      "type": "constant diffusion cylinder Robin eigenmode"
+    },
+    {
+      "n": 128,
+      "max_error": 4.776850905996444e-06,
+      "type": "constant diffusion cylinder Robin eigenmode"
+    }
+  ],
+  "runs": [
+    {
+      "n": 32,
+      "appendix": 3,
+      "shrink": false,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 57.47888458086871,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.0809287602484296,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 1.687538997430238e-14,
+      "rhs_evaluations": 1917,
+      "elapsed_s": 0.20445900037884712,
+      "samples": {
+        "0.5": {
+          "max_C": 2.549913757662847,
+          "min_C": 1.706504944741167,
+          "center_T_C": 32.18988116217548
+        },
+        "3": {
+          "max_C": 1.7661361561968054,
+          "min_C": 1.0313748104724219,
+          "center_T_C": 49.849529451406966
+        },
+        "24": {
+          "max_C": 0.23781698963634765,
+          "min_C": 0.10679012827040454,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.16183411404806072,
+          "min_C": 0.08480048845289544,
+          "center_T_C": 49.99893442622954
+        }
+      }
+    },
+    {
+      "n": 32,
+      "appendix": 4,
+      "shrink": true,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 51.098927224841724,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.07025347747618332,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 5.284661597215745e-14,
+      "rhs_evaluations": 1985,
+      "elapsed_s": 0.1920833750627935,
+      "samples": {
+        "0.5": {
+          "max_C": 2.549999999999999,
+          "min_C": 1.3377403845644118,
+          "center_T_C": 31.03852207245592
+        },
+        "3": {
+          "max_C": 2.4539313894222747,
+          "min_C": 0.7515183165898776,
+          "center_T_C": 49.82052708335311
+        },
+        "24": {
+          "max_C": 0.2851761770416884,
+          "min_C": 0.09981649416612431,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.15616365842732471,
+          "min_C": 0.0717890177362698,
+          "center_T_C": 49.998934426229596
+        }
+      }
+    },
+    {
+      "n": 64,
+      "appendix": 3,
+      "shrink": false,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 57.47511795078867,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.07408592294602194,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 8.970602038971265e-14,
+      "rhs_evaluations": 1892,
+      "elapsed_s": 0.19242391595616937,
+      "samples": {
+        "0.5": {
+          "max_C": 2.5499281214861935,
+          "min_C": 1.6775884792904028,
+          "center_T_C": 32.18981523255667
+        },
+        "3": {
+          "max_C": 1.7661798625943577,
+          "min_C": 1.0197620638480247,
+          "center_T_C": 49.848951243456725
+        },
+        "24": {
+          "max_C": 0.23780356129478405,
+          "min_C": 0.0959740148875664,
+          "center_T_C": 49.99893442622948
+        },
+        "48": {
+          "max_C": 0.16182917219152182,
+          "min_C": 0.07735585383255093,
+          "center_T_C": 49.998934426229596
+        }
+      }
+    },
+    {
+      "n": 64,
+      "appendix": 4,
+      "shrink": true,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 51.09357065608715,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.0641995027999446,
+      "max_C": 2.5500000000000003,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 1.2878587085651816e-13,
+      "rhs_evaluations": 2105,
+      "elapsed_s": 0.2202009162865579,
+      "samples": {
+        "0.5": {
+          "max_C": 2.55,
+          "min_C": 1.2341087724004651,
+          "center_T_C": 31.036941616466777
+        },
+        "3": {
+          "max_C": 2.4545103579633323,
+          "min_C": 0.7181410535629645,
+          "center_T_C": 49.82257279962937
+        },
+        "24": {
+          "max_C": 0.2851345887106044,
+          "min_C": 0.08861311647640789,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.1561526337337617,
+          "min_C": 0.06541658276493639,
+          "center_T_C": 49.99893442622954
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 3,
+      "shrink": false,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 57.47430609789085,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.06839316246336544,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 1.0746958878371515e-13,
+      "rhs_evaluations": 2057,
+      "elapsed_s": 0.24057283299043775,
+      "samples": {
+        "0.5": {
+          "max_C": 2.549932096667272,
+          "min_C": 1.6630947860680418,
+          "center_T_C": 32.188944691783604
+        },
+        "3": {
+          "max_C": 1.7661816793765313,
+          "min_C": 1.0139579132555092,
+          "center_T_C": 49.85015025989486
+        },
+        "24": {
+          "max_C": 0.23780079004058183,
+          "min_C": 0.08732482951413834,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.16182810418557442,
+          "min_C": 0.07117440450100719,
+          "center_T_C": 49.99893442622954
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 4,
+      "shrink": true,
+      "boundary_extension": "mean",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 51.09241977629707,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.059792928275582635,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.14999999999999997,
+      "max_dry_mass_normalized_balance_residual": 1.2745360322696797e-13,
+      "rhs_evaluations": 2048,
+      "elapsed_s": 0.2510530836880207,
+      "samples": {
+        "0.5": {
+          "max_C": 2.55,
+          "min_C": 1.1826656083318956,
+          "center_T_C": 31.037602387493905
+        },
+        "3": {
+          "max_C": 2.4546740481822096,
+          "min_C": 0.7012991604206218,
+          "center_T_C": 49.82068417591671
+        },
+        "24": {
+          "max_C": 0.2851251460942162,
+          "min_C": 0.08058015188740987,
+          "center_T_C": 49.998934426229596
+        },
+        "48": {
+          "max_C": 0.1561502723719111,
+          "min_C": 0.06075214483190863,
+          "center_T_C": 49.99893442622954
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 3,
+      "shrink": false,
+      "boundary_extension": "mean",
+      "rtol": 2e-07,
+      "max_step_s": 300,
+      "success": true,
+      "drying_event_hours": 57.474255480451305,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.06839316247818585,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 1.5987211554602254e-14,
+      "rhs_evaluations": 4329,
+      "elapsed_s": 0.5433934577740729,
+      "samples": {
+        "0.5": {
+          "max_C": 2.549932881592929,
+          "min_C": 1.6631112627605749,
+          "center_T_C": 32.1892976922461
+        },
+        "3": {
+          "max_C": 1.7661737964819006,
+          "min_C": 1.0139509103430298,
+          "center_T_C": 49.84966292796355
+        },
+        "24": {
+          "max_C": 0.23780045869725264,
+          "min_C": 0.08732476130102414,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.16182802901623816,
+          "min_C": 0.07117438717433745,
+          "center_T_C": 49.99893442622954
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 3,
+      "shrink": false,
+      "boundary_extension": "last",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 57.16965091727264,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.06837796087333037,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 3.2862601528904634e-14,
+      "rhs_evaluations": 1971,
+      "elapsed_s": 0.24011174961924553,
+      "samples": {
+        "0.5": {
+          "max_C": 2.549932096667272,
+          "min_C": 1.6630947860680418,
+          "center_T_C": 32.188944691783604
+        },
+        "3": {
+          "max_C": 1.7661816793765313,
+          "min_C": 1.0139579132555092,
+          "center_T_C": 49.85015025989486
+        },
+        "24": {
+          "max_C": 0.2371004702783961,
+          "min_C": 0.08717556924254839,
+          "center_T_C": 50.164999999999964
+        },
+        "48": {
+          "max_C": 0.1614598946532503,
+          "min_C": 0.07107616467578716,
+          "center_T_C": 50.16500000000002
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 4,
+      "shrink": true,
+      "boundary_extension": "mean",
+      "rtol": 2e-07,
+      "max_step_s": 300,
+      "success": true,
+      "drying_event_hours": 51.092393244259284,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.05979292817445201,
+      "max_C": 2.5500000000000003,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 8.881784197001252e-15,
+      "rhs_evaluations": 4609,
+      "elapsed_s": 0.6012197500094771,
+      "samples": {
+        "0.5": {
+          "max_C": 2.55,
+          "min_C": 1.1826712683520564,
+          "center_T_C": 31.03781060999154
+        },
+        "3": {
+          "max_C": 2.4546742923262377,
+          "min_C": 0.7012964413084215,
+          "center_T_C": 49.8212603020188
+        },
+        "24": {
+          "max_C": 0.2851238886334941,
+          "min_C": 0.0805799554260821,
+          "center_T_C": 49.99893442622954
+        },
+        "48": {
+          "max_C": 0.15615021569796225,
+          "min_C": 0.06075213578621716,
+          "center_T_C": 49.99893442622948
+        }
+      }
+    },
+    {
+      "n": 128,
+      "appendix": 4,
+      "shrink": true,
+      "boundary_extension": "last",
+      "rtol": 2e-06,
+      "max_step_s": 600,
+      "success": true,
+      "drying_event_hours": 50.824620727095606,
+      "radius_extrapolated_after_72h": false,
+      "event_uses_max_cell_C_not_certified_continuous_max": true,
+      "min_C": 0.05973780730852997,
+      "max_C": 2.55,
+      "final_center_cell_C": 0.15,
+      "max_dry_mass_normalized_balance_residual": 2.3003821070233244e-13,
+      "rhs_evaluations": 2044,
+      "elapsed_s": 0.2549216249026358,
+      "samples": {
+        "0.5": {
+          "max_C": 2.55,
+          "min_C": 1.1826656083318956,
+          "center_T_C": 31.037602387493905
+        },
+        "3": {
+          "max_C": 2.4546740481822096,
+          "min_C": 0.7012991604206218,
+          "center_T_C": 49.82068417591671
+        },
+        "24": {
+          "max_C": 0.2837464587433324,
+          "min_C": 0.08035654275380139,
+          "center_T_C": 50.16500000000008
+        },
+        "48": {
+          "max_C": 0.15561782322125703,
+          "min_C": 0.06061672715536352,
+          "center_T_C": 50.164999999999964
+        }
+      }
+    }
+  ]
+}

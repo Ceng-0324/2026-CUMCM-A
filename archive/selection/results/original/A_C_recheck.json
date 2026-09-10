@@ -1,0 +1,91 @@
+{
+  "A_formula_source": "A题/A题.pdf p4, original PDF visually checked; numerator 0.45/0.30, denominator C",
+  "A_formulas": [
+    {
+      "temperature_K": 323.15,
+      "concentration": 2.55,
+      "D_appendix3_correct_m2_s": 1.347096821741582e-08,
+      "D_appendix3_report_wrong_m2_s": 3.5013703893556186e-09,
+      "wrong_over_correct": 0.25991972758341925,
+      "D_appendix4_correct_m2_s": 2.5002509122379004e-09,
+      "R2_over_D_hours_not_drying_duration": 8.248190428321411
+    },
+    {
+      "temperature_K": 323.15,
+      "concentration": 1,
+      "D_appendix3_correct_m2_s": 1.0247230312086917e-08,
+      "D_appendix3_report_wrong_m2_s": 5.9121375854837176e-09,
+      "wrong_over_correct": 0.5769498103804862,
+      "D_appendix4_correct_m2_s": 2.083477037198514e-09,
+      "R2_over_D_hours_not_drying_duration": 10.843038335934757
+    },
+    {
+      "temperature_K": 323.15,
+      "concentration": 0.15,
+      "D_appendix3_correct_m2_s": 8.001208146652625e-10,
+      "D_appendix3_report_wrong_m2_s": 1.0497873756854344e-08,
+      "wrong_over_correct": 13.12036078107307,
+      "D_appendix4_correct_m2_s": 3.806169274383754e-10,
+      "R2_over_D_hours_not_drying_duration": 138.86791728771038
+    },
+    {
+      "temperature_K": 323.15,
+      "concentration": 0.05,
+      "D_appendix3_correct_m2_s": 1.983301210947583e-12,
+      "D_appendix3_report_wrong_m2_s": 1.2394698633798617e-08,
+      "wrong_over_correct": 6249.529100966298,
+      "D_appendix4_correct_m2_s": 6.971242197900836e-12,
+      "R2_over_D_hours_not_drying_duration": 56023.316326229826
+    }
+  ],
+  "A_room_boundary": {
+    "initial": {
+      "1": 0.0,
+      "2": 28.0,
+      "3": 0.01963
+    },
+    "last": {
+      "1": 14400.0,
+      "2": 50.165,
+      "3": 0.04986
+    },
+    "last_hour_mean_T_C": 49.99893442622951,
+    "last_hour_mean_room_C": 0.04998754098360656
+  },
+  "A_geometry": {
+    "L_m": 0.25,
+    "R_m": 0.02,
+    "length_over_diameter": 6.25,
+    "length_over_radius": 12.5,
+    "both_end_area_over_side_area": 0.08
+  },
+  "C_reference_price_unique_values": 137,
+  "C_same_target_forecast_comparison": [
+    {
+      "release_hour": 6,
+      "targets": "next 6 hourly targets, same dates and targets for both forecasts",
+      "n": 2190,
+      "mae_midnight": 348.9880742009132,
+      "mae_updated": 153.47299155251142,
+      "use": "descriptive audit only; no economic savings or out-of-sample tuning claim"
+    },
+    {
+      "release_hour": 12,
+      "targets": "next 6 hourly targets, same dates and targets for both forecasts",
+      "n": 2190,
+      "mae_midnight": 373.4825415981735,
+      "mae_updated": 68.35287292237443,
+      "use": "descriptive audit only; no economic savings or out-of-sample tuning claim"
+    },
+    {
+      "release_hour": 18,
+      "targets": "next 6 hourly targets, same dates and targets for both forecasts",
+      "n": 2190,
+      "mae_midnight": 0.005669680365296803,
+      "mae_updated": 0.00032789954337899554,
+      "use": "descriptive audit only; no economic savings or out-of-sample tuning claim"
+    }
+  ],
+  "A_solution_status": "No PDE solved in this reassessment; scales are not final drying durations",
+  "C_solution_status": "No dispatch solved in this reassessment; forecast errors are not cost savings"
+}

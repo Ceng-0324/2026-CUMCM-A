@@ -1,0 +1,16 @@
+[project]
+name = "cumcm-2026-a"
+version = "0.1.0"
+description = "2026 CUMCM A 题：药材烘干建模与可复现计算"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "numpy==2.4.4",
+    "scipy==1.17.1",
+]
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
