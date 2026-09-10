@@ -1,14 +1,16 @@
 # 2026 CUMCM A · 药材的烘干问题
 
-本项目已确定研究 A 题，当前处于模型设计与可行性原型验证阶段。
+本项目已确定研究 A 题，资料整理与 Git 工程已完成，当前进入正式模型闭合、四问求解准备和论文问题分析交接。
 
 从 [A题思路分析总文档](reports/ANALYSIS_MODELING_REPORT.md) 开始阅读。它统一了题意、数据口径、四问模型、创新设计与试算证据；[计划](plan.md) 记录阶段安排，[待办](todo.md) 记录完成状态。
+
+论文手可直接使用 [论文问题分析撰写稿](reports/论文问题分析.md) 的四个分析小节。该稿按“问题本质—主要难点—处理思路—检验重点”组织，是总文档的写作表达；正式数值结论仍需等待结果验收。计划已细化为 A 题执行流程，现有模型主线和原型继续复用。
 
 ## 目录
 
 ```text
 problemA/              原始 PDF、数据附件、结果模板与 SHA-256 清单
-reports/               当前有效建模报告；后续添加结果与验收报告
+reports/               模型总文档、论文问题分析稿；后续添加结果与验收报告
 code/                  A 题输入审计、数学原型、试算入口和工程检查
 tests/                 输入保护、积分通量、守恒与解析收敛测试
 results/probes/        可复算的小型试算证据，纳入 Git
@@ -54,4 +56,4 @@ UV_CACHE_DIR=.uv-cache uv run --frozen python code/probes.py \
 - [历史归档](archive/selection/README.md) 保持内容，旧结论不作为现行契约。原型模型有意改变时，应同步更新报告和回归检查，不能通过放宽容差掩盖差异。
 - 提交前运行 `make verify` 与 `git diff --check`。GitHub Actions 已配置相同检查，远程执行结果以实际运行记录为准。
 
-当前未交付正式 result1–4 工作簿、阶段降阶求解器和论文。后续任务的优先级与完成标准统一见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)。
+当前未交付正式 result1–4 工作簿、阶段降阶求解器和论文全文；已有四问问题分析素材。方法与验证要求见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)，执行依赖与交付顺序见 [计划](plan.md)。
