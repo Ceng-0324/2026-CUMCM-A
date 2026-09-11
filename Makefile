@@ -2,7 +2,7 @@ UV ?= uv
 export UV_CACHE_DIR ?= $(CURDIR)/.uv-cache
 RUN = $(UV) run --frozen
 
-.PHONY: help setup audit test check probe q1 q2 q3 verify extract
+.PHONY: help setup audit test check probe q1 q2 q3 q4 verify extract
 
 help:
 	@echo "make setup   安装锁定依赖"
@@ -11,6 +11,7 @@ help:
 	@echo "make q1      生成 Q1 工作簿、验证报告和数据图"
 	@echo "make q2      生成 Q2 前 3 h 工作簿、验证报告和数据图"
 	@echo "make q3      生成 Q3 达标事件工作簿、验证报告和数据图"
+	@echo "make q4      生成 Q4 收缩条件工作簿、验证报告和数据图"
 	@echo "make verify  在临时目录重算并核对已记录证据"
 	@echo "make extract 提取题面文本（需要 pdftotext）"
 
@@ -37,6 +38,9 @@ q2:
 
 q3:
 	$(RUN) python code/q3/problem3.py
+
+q4:
+	$(RUN) python code/q4/problem4.py
 
 verify: check
 	$(RUN) python code/common/check_project.py --recompute

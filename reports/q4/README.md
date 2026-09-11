@@ -1,6 +1,8 @@
 # Q4 报告
 
-- [METHOD_OVERVIEW.md](METHOD_OVERVIEW.md)：Q4 计划采用的建模、坐标变换、守恒和机制分析方法速览；正式结果尚未完成。
-Q4 正式结果报告尚未生成。完成后在此记录收缩坐标变换、干基守恒、附录 4 物性、表 6、机制分解和结果限制。
+- [METHOD_OVERVIEW.md](METHOD_OVERVIEW.md)：Q4 建模、坐标变换、守恒和机制分析方法速览。
+- [RESULTS_REPORT.md](RESULTS_REPORT.md)：收缩条件下附录 4 正式结果、表 6、数值验证和四组合机制分解。
+
+Q4 采用材料坐标固定计算域，输出时映射回实际半径；当前结果仍受均匀径向收缩、干骨架无损失、有效表面平衡浓度和环境延拓假设约束。
 
 对应代码、结果和图件分别位于 [`code/q4/`](../../code/q4/)、[`results/q4/`](../../results/q4/) 和 [`figures/q4/`](../../figures/q4/)。

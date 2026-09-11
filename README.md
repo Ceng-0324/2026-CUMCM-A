@@ -1,20 +1,20 @@
 # 2026 CUMCM A · 药材的烘干问题
 
-本项目研究 A 题。Q1、Q2、Q3 已完成公共连续场接口、正式结果工作簿、数值验证和数据图；Q4 正式求解待推进。Q1–Q3 结果限于明确的径向传递、有效边界和固定半径条件假设，详见各问题结果报告。
+本项目研究 A 题。Q1、Q2、Q3、Q4 均已完成正式结果工作簿、数值验证和数据图；Q4 采用材料坐标、收缩半径与附录 4 整组物性。所有结果均限于各报告明确的径向传递、有效边界和收缩假设。
 
 从 [A题思路分析总文档](reports/ANALYSIS_MODELING_REPORT.md) 开始阅读。它统一了题意、数据口径、四问模型、创新设计与试算证据；[计划](plan.md) 记录阶段安排，[待办](todo.md) 记录完成状态。
 
 四个问题的文件按“代码、报告、结果、图件”分目录保存；每个问题的 `reports/qX/METHOD_OVERVIEW.md` 是论文手的第一入口，先告诉你本问实际用了哪些建模方法和算法，再进入算法分析稿和结果报告。结果、图件和数据按问题目录分别索引。
 
-论文手可直接使用 [论文问题分析撰写稿](reports/论文问题分析.md)。该稿采用“总体主线—四问分析—总体求解路线”的结构，每问突出本质、难点与对策，是总文档的写作表达；Q1–Q3 方法与结果可据已验收报告入稿，Q4 数值结论仍需等待验收。计划已细化为 A 题执行流程，现有模型主线和原型继续复用。
+论文手可直接使用 [论文问题分析撰写稿](reports/论文问题分析.md)。该稿采用“总体主线—四问分析—总体求解路线”的结构，每问突出本质、难点与对策；Q1–Q4 方法与结果均可据各自验收报告入稿。计划已细化为 A 题执行流程。
 
 ## Quick Start：论文手先看什么
 
 不需要先通读整个仓库。按下面的顺序即可快速进入任一子问题：
 
 1. **先看方法概览**：打开 `reports/qX/METHOD_OVERVIEW.md`，确认本问的建模对象、核心算法、输出和验证状态。
-2. **再看正文稿**：打开 `reports/qX/problemX_algorithm_analysis.md`（Q4 暂无正文稿），获取可直接改写进论文的公式、算法流程和段落。
-3. **核对结果**：打开 `reports/qX/RESULTS_REPORT.md`（Q4 尚未生成），确认正式数值、结果边界和验证结论。
+2. **再看正文稿**：打开 `reports/qX/problemX_algorithm_analysis.md`（Q4 正文稿可在结果报告基础上补写），获取可直接改写进论文的公式、算法流程和段落。
+3. **核对结果**：打开 `reports/qX/RESULTS_REPORT.md`，确认正式数值、结果边界和验证结论。
 4. **取表格和图件**：表格从 `results/qX/` 的 CSV 获取，图件从 `figures/qX/` 的 PDF 获取；对应目录 README 会说明每个文件的用途。
 5. **需要追溯实现时**：最后再看 `code/qX/README.md` 和代码入口，不要把脚本路径、哈希或工作簿回读过程直接写进论文正文。
 
@@ -25,7 +25,7 @@
 | Q1 预热阶段 | [Q1 方法概览](reports/q1/METHOD_OVERVIEW.md) | [Q1 正文稿](reports/q1/problem1_algorithm_analysis.md) | [Q1 结果报告](reports/q1/RESULTS_REPORT.md) | 条件模型已验证 |
 | Q2 变物性耦合 | [Q2 方法概览](reports/q2/METHOD_OVERVIEW.md) | [Q2 正文稿](reports/q2/problem2_algorithm_analysis.md) | [Q2 结果报告](reports/q2/RESULTS_REPORT.md) | 前 3 h 正式结果已验证 |
 | Q3 连续域达标事件 | [Q3 方法概览](reports/q3/METHOD_OVERVIEW.md) | [Q3 正文稿](reports/q3/problem3_algorithm_analysis.md) | [Q3 结果报告](reports/q3/RESULTS_REPORT.md) | 固定半径正式结果已验证 |
-| Q4 收缩与机制分解 | [Q4 方法概览](reports/q4/METHOD_OVERVIEW.md) | [Q4 总模型 Q4 小节](reports/ANALYSIS_MODELING_REPORT.md#7-q4材料坐标干基守恒与作用分解) | 暂无正式结果报告 | 方法设计完成，数值待推进 |
+| Q4 收缩与机制分解 | [Q4 方法概览](reports/q4/METHOD_OVERVIEW.md) | [Q4 总模型 Q4 小节](reports/ANALYSIS_MODELING_REPORT.md#7-q4材料坐标干基守恒与作用分解) | [Q4 结果报告](reports/q4/RESULTS_REPORT.md) | 正式结果、四组合机制与验证已完成 |
 
 ### 文件用途怎么区分
 
@@ -44,7 +44,7 @@
 - 写**某一问的方法与求解**：按上表先读该问 `METHOD_OVERVIEW.md`，再读对应正文稿。
 - 写**某一问的结果分析**：在对应 `RESULTS_REPORT.md` 中找正式数值，再按正文稿的“表格与图件插入说明”放置 CSV/PDF。
 - 写**模型评价与限制**：同时核对该问结果报告的验证边界和总文档的假设敏感性预检。
-- 写**Q4**：当前只能使用方法概览和总模型设计；正式结果、表 6、工作簿和图件生成后再补结果段落。
+- 写**Q4**：使用方法概览、结果报告、表 6 工作簿和图件补写正文结果段落。
 
 ## 目录
 
@@ -55,12 +55,12 @@ code/
 ├── q1/                Q1 正式结果、验证和绘图脚本
 ├── q2/                Q2 变物性全场脚本
 ├── q3/                Q3 连续域事件脚本
-└── q4/                Q4 收缩与机制脚本（待实现）
+└── q4/                Q4 收缩与机制脚本
 figures/
 ├── q1/                Q1 中文矢量数据图
 ├── q2/                Q2 图件
 ├── q3/                Q3 图件
-└── q4/                Q4 图件（待生成）
+└── q4/                Q4 图件
 reports/
 ├── ANALYSIS_MODELING_REPORT.md  A 题模型与假设事实源
 ├── 论文问题分析.md             论文问题分析素材
@@ -128,4 +128,4 @@ field = solution.sample([100, 1800], [0, 0.01, 0.02])
 - [历史归档](archive/selection/README.md) 保持内容，旧结论不作为现行契约。原型模型有意改变时，应同步更新报告和回归检查，不能通过放宽容差掩盖差异。
 - 提交前运行 `make verify` 与 `git diff --check`。GitHub Actions 已配置相同检查，远程执行结果以实际运行记录为准。
 
-当前已交付条件模型下的 Q1、Q2 和固定半径条件下的 Q3，并完成表面浓度基准和潜热的情景复核；复核没有足够题面数据支持替换基线。Q4 正式结果、阶段降阶和论文全文尚未完成。方法与验证要求见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)，执行顺序见 [计划](plan.md)。
+当前已交付条件模型下的 Q1、Q2、固定半径 Q3 和收缩半径 Q4，并完成表面浓度基准、潜热情景复核及 Q4 四组合机制分析；复核没有足够题面数据支持替换基线。阶段降阶和论文全文尚未完成。方法与验证要求见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)，执行顺序见 [计划](plan.md)。

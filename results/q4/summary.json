@@ -1,0 +1,206 @@
+{
+  "scope": "Q4 shrinking radius appendix 4 continuous-domain event",
+  "provenance": {
+    "python": "3.14.6",
+    "numpy": "2.4.4",
+    "scipy": "1.17.1",
+    "xlsxwriter": "3.2.9",
+    "input_sha256": {
+      "problemA/problemA.pdf": "052d8014bff5727c019b72e44fdffaf5c145ce04050dd938baaf3527db331736",
+      "problemA/附件/附件1.xlsx": "7ef32870abeef420b89560b2530ff60dfe4255917805151d89988d0311af9dd7",
+      "problemA/附件/附件2.xlsx": "5563acbfa4b4afb10cc6c03e2207e5369bf39da27576672aff14cc5c32e704af",
+      "problemA/附件/附件3/result1.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result2.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result3.xlsx": "07e4793d620a7f899804c0298d49a16a197960440fd47f8bb780c57ec27e2859",
+      "problemA/附件/附件3/result4.xlsx": "86e9300ffa3d30c43de895ea6723da943e85b8740b137bcae5af7107f076eeac"
+    },
+    "code_sha256": {
+      "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
+      "code/common/model.py": "db98497e445b7f54e754bace42cc754317f53f0d66bbb067824dfca1912af1b7",
+      "code/q4/problem4.py": "c9214b8a922f4f9f1770f79f2e640b8a2a9b14cd6336e682c768cc7be53a5cfc"
+    }
+  },
+  "configuration": {
+    "n": 1024,
+    "appendix": 4,
+    "shrink": true,
+    "duration_s": 259200.0,
+    "rtol": 2e-07,
+    "atol": 2e-09,
+    "max_step": 300,
+    "threshold": 0.15,
+    "boundary_extension": "附件1末小时均值",
+    "output_step_s": 60.0
+  },
+  "event": {
+    "event_time_s": 183931.795254208,
+    "event_time_h": 51.09216534839111,
+    "bracket_s": [
+      183600.0,
+      184200.0
+    ],
+    "event_max_moisture": 0.14999999999997227,
+    "event_max_material_coordinate": 0.0,
+    "first_strict_time_s": 183960.0,
+    "first_strict_time_h": 51.1,
+    "first_strict_max_moisture": 0.1499855200179674
+  },
+  "validation": {
+    "grid": [
+      256,
+      512,
+      1024
+    ],
+    "event_time_h": [
+      51.092352523220214,
+      51.092203024691976,
+      51.09216534839111
+    ],
+    "difference_s": [
+      0.6738293847593013,
+      0.13563468310167082,
+      0.0
+    ],
+    "tight_event_time_h": 51.09202076776883,
+    "tight_difference_s": -0.5204902402183507,
+    "profile_refinement_difference": 0.0,
+    "min_moisture": 0.05260661881341448,
+    "max_water_balance_residual": 6.661338147750939e-15
+  },
+  "table6": {
+    "times_h": [
+      6.0,
+      12.0,
+      18.0,
+      24.0,
+      30.0,
+      36.0,
+      42.0,
+      48.0,
+      51.09216534839111
+    ],
+    "moisture": [
+      [
+        1.719603150073305,
+        1.537755181377147,
+        1.0226168899693941,
+        null,
+        0.42068365163230287
+      ],
+      [
+        0.7376881528648644,
+        0.6546411793803306,
+        0.40832491920883096,
+        null,
+        0.16694789822641587
+      ],
+      [
+        0.4087566506159738,
+        0.36865568736866905,
+        0.23974275484248225,
+        null,
+        0.08917566033840317
+      ],
+      [
+        0.28512131011523595,
+        0.2610628031274082,
+        0.1789903253616011,
+        null,
+        0.06732464072815461
+      ],
+      [
+        0.2263271716332106,
+        0.20938713948608761,
+        0.14926568309344856,
+        null,
+        0.059479448840351515
+      ],
+      [
+        0.19281950305557916,
+        0.17965795044787503,
+        0.13165965719297856,
+        null,
+        0.055952922525774065
+      ],
+      [
+        0.17123908610522626,
+        0.1603749583526501,
+        0.1199773287156468,
+        null,
+        0.05409454895352396
+      ],
+      [
+        0.15614969367101916,
+        0.14681000461661492,
+        0.11156296136270566,
+        null,
+        0.05300230118692824
+      ],
+      [
+        0.14999999999997227,
+        0.14126066635743723,
+        0.10806986147558675,
+        null,
+        0.05260751360303928
+      ]
+    ]
+  },
+  "mechanism": {
+    "cases": {
+      "fixed_appendix3": {
+        "appendix": 3,
+        "shrink": false,
+        "integration_duration_h": 168.0,
+        "radius_extrapolated": false,
+        "event_time_h": 57.474064731591234,
+        "event_time_s": 206906.63303372843
+      },
+      "fixed_appendix4": {
+        "appendix": 4,
+        "shrink": false,
+        "integration_duration_h": 168.0,
+        "radius_extrapolated": false,
+        "event_time_h": 129.84840533346042,
+        "event_time_s": 467454.25920045754
+      },
+      "shrink_appendix3": {
+        "appendix": 3,
+        "shrink": true,
+        "integration_duration_h": 72.0,
+        "radius_extrapolated": false,
+        "event_time_h": 25.24400627472438,
+        "event_time_s": 90878.42258900777
+      },
+      "shrink_appendix4": {
+        "appendix": 4,
+        "shrink": true,
+        "integration_duration_h": 72.0,
+        "radius_extrapolated": false,
+        "event_time_h": 51.09216534839111,
+        "event_time_s": 183931.795254208
+      }
+    },
+    "effects": {
+      "baseline_fixed_appendix3_h": 57.474064731591234,
+      "geometry_effect_at_appendix3_h": -32.23005845686686,
+      "property_effect_at_fixed_geometry_h": 72.37434060186919,
+      "interaction_effect_h": -46.52618152820245,
+      "geometry_order_averaged_h": -55.49314922096808,
+      "property_order_averaged_h": 49.11124983776797,
+      "net_change_h": -6.381899383200121
+    }
+  },
+  "workbook": {
+    "sheet": "Sheet1",
+    "data_rows": 3067,
+    "radial_columns": 21,
+    "surface_column": true,
+    "outside_radius_as_nan": true,
+    "all_cells_read_back": true
+  },
+  "figures": [
+    "q4_convergence.pdf",
+    "q4_shrink_profiles.pdf",
+    "q4_threshold_event.pdf"
+  ]
+}

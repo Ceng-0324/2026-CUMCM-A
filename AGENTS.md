@@ -8,7 +8,7 @@
 - [plan.md](plan.md) 管阶段安排，[todo.md](todo.md) 管完成状态；不要创建平行的 A 题分析总文档。
 - [论文问题分析撰写稿](reports/论文问题分析.md) 是总文档派生的四问写作素材；只同步论文表述，不独立定义模型或验证结论。模型改变时先更新总文档，再同步该稿。
 - `archive/selection/` 是历史材料，包含过时结论和已经不存在的 B/C 输入路径，不能用作当前运行入口。
-- `code/common/model.py` 已提供共用求解器与连续中心/表面采样。Q1 输出与条件模型下的数值验证已完成，见 [RESULTS_REPORT](reports/q1/RESULTS_REPORT.md)；Q2–Q4 连续域事件、长期收缩验收及阶段降阶未完成。
+- `code/common/model.py` 已提供共用求解器与连续中心/表面采样。Q1–Q4 正式结果与连续域事件已完成，Q4 收缩、工作簿、四组合机制和图件见 [Q4 RESULTS_REPORT](reports/q4/RESULTS_REPORT.md)；阶段降阶仍未实现。
 - 论文手可提前撰写不依赖结果的问题分析，完整论文阶段仍须等待正式结果；Markdown 素材交接不代表排版引擎已确定或论文工程已建立。
 
 ## 数据与代码所有权

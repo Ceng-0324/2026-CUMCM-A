@@ -1,0 +1,348 @@
+"""Q4 收缩材料域正式结果、四组合机制对照和论文图件。"""
+from __future__ import annotations
+
+import argparse
+from datetime import datetime
+from hashlib import sha256
+from pathlib import Path
+import platform
+import sys
+import time
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy
+import xlsxwriter
+from scipy.optimize import brentq
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
+from data_io import ROOT, read_xlsx, verify_inputs, write_json
+from model import solve_radial, reconstruct_profile, kirchhoff, inverse_kirchhoff
+
+THRESHOLD = 0.15
+DURATION_S = 72 * 3600.0
+MECHANISM_DURATION_S = 168 * 3600.0
+FORMAL_GRID = 1024
+GRID_RUNS = (256, 512, 1024)
+OUTPUT_STEP_S = 60.0
+SCAN_STEP_S = 600.0
+RADII_CM = np.arange(21, dtype=float) / 10.0
+TABLE_POSITIONS_CM = np.arange(4, dtype=float) / 2.0
+
+
+def provenance():
+    sources = ["code/common/data_io.py", "code/common/model.py", "code/q4/problem4.py"]
+    return {"python": platform.python_version(), "numpy": np.__version__,
+            "scipy": scipy.__version__, "xlsxwriter": xlsxwriter.__version__,
+            "input_sha256": {e["path"]: e["sha256"] for e in verify_inputs()},
+            "code_sha256": {p: sha256((ROOT / p).read_bytes()).hexdigest() for p in sources}}
+
+
+def continuous_max(solution, t, points=513):
+    xi = np.linspace(0.0, 1.0, points)
+    sample = solution.sample([float(t)], xi, coordinate="material")
+    c = sample.moisture[0]
+    if t == 0:
+        return 2.55, 0.0, xi, c
+    model, n = solution.model, solution.model.n
+    y = solution.state([float(t)])[:, 0]
+    _, water, _, cs, _, _, _, base, a = model.fluxes(t, y)
+    pk = reconstruct_profile(model.centers, kirchhoff(y[n:2*n], a),
+                             kirchhoff(cs, a), -model.radius(t)*water[-1]/base[-1])
+    # K(C) is strictly increasing: examine every cubic's endpoints and stationary points.
+    candidates = spline_candidates(pk)
+    values = pk(candidates)
+    i = int(np.argmax(values))
+    maximum = inverse_kirchhoff(values[i], a, 2*max(2.55, float(y[n:2*n].max()), cs))
+    return float(maximum), float(candidates[i]), xi, c
+
+
+def spline_candidates(spline):
+    roots = spline.derivative().roots(extrapolate=False)
+    roots = roots[np.isfinite(roots) & (roots >= spline.x[0]) & (roots <= spline.x[-1])]
+    return np.unique(np.r_[spline.x, roots])
+
+
+def locate_event(solution, scan_step=SCAN_STEP_S, profile_points=257):
+    times = np.unique(np.minimum(np.arange(0.0, solution.end_s + scan_step, scan_step), solution.end_s))
+    values = np.array([continuous_max(solution, t, profile_points)[0] for t in times])
+    crossing = np.flatnonzero(((values[:-1] - THRESHOLD) >= 0) & ((values[1:] - THRESHOLD) < 0))
+    if not len(crossing):
+        raise RuntimeError(f"在 {solution.end_s/3600:g} h 内未找到连续域达标事件")
+    i = int(crossing[0])
+
+    def f(t):
+        return continuous_max(solution, t, profile_points)[0] - THRESHOLD
+
+    event_s = float(brentq(f, times[i], times[i + 1], xtol=1e-5, rtol=1e-12))
+    mc, xi, p, c = continuous_max(solution, event_s, 1025)
+    return {"event_time_s": event_s, "event_time_h": event_s / 3600.0,
+            "bracket_s": [float(times[i]), float(times[i + 1])],
+            "scan_times_s": times, "scan_max_moisture": values,
+            "event_max_moisture": mc, "event_max_material_coordinate": xi,
+            "event_profile_xi": p, "event_profile_moisture": c}
+
+
+def table_times(event_s):
+    return np.r_[np.arange(6 * 3600.0, event_s, 6 * 3600.0), event_s]
+
+
+def export_workbook(path, times_s, moisture, surface):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with xlsxwriter.Workbook(path) as book:
+        book.set_properties({"title": "问题四：收缩药材含水率", "created": datetime(2000, 1, 1)})
+        val_fmt = book.add_format({"num_format": "0.0000"})
+        head_fmt = book.add_format({"bold": True, "text_wrap": True})
+        radius_fmt = book.add_format({"num_format": "0.0", "bold": True})
+        sheet = book.add_worksheet("Sheet1")
+        sheet.write(0, 0, "时间\\到药材中心的距离", head_fmt)
+        sheet.write_row(0, 1, RADII_CM, radius_fmt)
+        sheet.write(0, len(RADII_CM) + 1, "药材表面", head_fmt)
+        for i, (t, row, s) in enumerate(zip(times_s, np.round(moisture, 4), np.round(surface, 4)), start=1):
+            sheet.write_number(i, 0, float(t))
+            for j, value in enumerate(row, start=1):
+                if np.isfinite(value):
+                    sheet.write_number(i, j, float(value), val_fmt)
+                else:
+                    sheet.write_blank(i, j, None, val_fmt)
+            sheet.write_number(i, len(RADII_CM) + 1, float(s), val_fmt)
+        sheet.freeze_panes(1, 1)
+        sheet.set_column(0, 0, 22)
+        sheet.set_column(1, len(RADII_CM) + 1, 12)
+        sheet.set_row(0, 32)
+
+
+def verify_workbook(path, times_s, moisture, surface):
+    wb = read_xlsx(path)
+    if list(wb) != ["Sheet1"]:
+        raise ValueError("Q4 工作簿工作表必须为 Sheet1")
+    rows = wb["Sheet1"]["rows"]
+    if len(rows) != len(times_s) + 1 or wb["Sheet1"]["errors"] or wb["Sheet1"]["formula_count"]:
+        raise ValueError("Q4 工作簿结构错误")
+    header = rows[1]
+    if not np.allclose([header[j] for j in range(2, 23)], RADII_CM) or header[23] != "药材表面":
+        raise ValueError("Q4 工作簿表头错误")
+    for i, (t, expected, es) in enumerate(zip(times_s, moisture, surface), start=2):
+        row = rows[i]
+        if not np.isclose(row[1], float(t), atol=1e-9, rtol=0):
+            raise ValueError("Q4 时间轴回读不一致")
+        values = np.array([row.get(j, np.nan) for j in range(2, 23)], dtype=float)
+        if not np.allclose(values, np.round(expected, 4), equal_nan=True, atol=1e-12, rtol=0):
+            raise ValueError("Q4 实半径场回读不一致")
+        if not np.isclose(row.get(23, np.nan), round(float(es), 4), atol=1e-12, rtol=0):
+            raise ValueError("Q4 表面场回读不一致")
+    return {"sheet": "Sheet1", "data_rows": len(times_s), "radial_columns": 21,
+            "surface_column": True, "outside_radius_as_nan": True, "all_cells_read_back": True}
+
+
+def physical_output(solution, times_s):
+    field = solution.sample(times_s, RADII_CM / 100.0, coordinate="radius", outside="nan")
+    surface = solution.sample(times_s, [1.0], coordinate="material").moisture[:, 0]
+    return field.moisture, surface
+
+
+def plot_figures(figures_dir, event, solution, convergence):
+    figures_dir.mkdir(parents=True, exist_ok=True)
+    plt.rcParams.update({"font.sans-serif": ["STHeiti", "PingFang SC", "Hiragino Sans GB", "DejaVu Sans"],
+                         "axes.unicode_minus": False})
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(event["scan_times_s"] / 3600, event["scan_max_moisture"], label="连续域最大含水率")
+    ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值 0.15 kg/kg")
+    ax.axvline(event["event_time_h"], color="#444", ls=":", label=f"达标时刻 {event['event_time_h']:.4f} h")
+    ax.set(xlabel="时间/h", ylabel="最大含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
+    fig.tight_layout(); fig.savefig(figures_dir / "q4_threshold_event.pdf", format="pdf"); plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    for t in [max(0.0, event["event_time_s"] - 6 * 3600), event["event_time_s"]]:
+        xi = np.linspace(0, 1, 513)
+        c = solution.sample([t], xi, coordinate="material").moisture[0]
+        radius = solution.model.radius(t)
+        ax.plot(xi * radius * 100, c, label=f"{t/3600:.4f} h")
+    ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值")
+    ax.set(xlabel="实际到中心距离/cm", ylabel="含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
+    fig.tight_layout(); fig.savefig(figures_dir / "q4_shrink_profiles.pdf", format="pdf"); plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.plot(convergence["grid"], convergence["event_time_h"], "o-", label="连续事件时刻")
+    ax.set(xlabel="径向单元数 N", ylabel="达标时刻/h"); ax.grid(alpha=.25); ax.legend(frameon=False)
+    fig.tight_layout(); fig.savefig(figures_dir / "q4_convergence.pdf", format="pdf"); plt.close(fig)
+
+    return sorted(p.name for p in figures_dir.glob("q4_*.pdf"))
+
+
+def mechanism_runs():
+    cases = {}
+    for shrink in (False, True):
+        for appendix in (3, 4):
+            label = f"{'shrink' if shrink else 'fixed'}_appendix{appendix}"
+            solution = solve_radial(FORMAL_GRID, appendix=appendix, shrink=shrink,
+                                    duration_s=DURATION_S if shrink else MECHANISM_DURATION_S,
+                                    rtol=2e-7, atol=2e-9,
+                                    max_step=300, align_environment=True)
+            event = locate_event(solution)
+            cases[label] = {"appendix": appendix, "shrink": shrink,
+                            "integration_duration_h": solution.end_s/3600,
+                            "radius_extrapolated": bool(shrink and solution.end_s > solution.model.radii[-1, 0]),
+                            "event_time_h": event["event_time_h"],
+                            "event_time_s": event["event_time_s"]}
+    base = cases["fixed_appendix3"]["event_time_h"]
+    effects = {
+        "baseline_fixed_appendix3_h": base,
+        "geometry_effect_at_appendix3_h": cases["shrink_appendix3"]["event_time_h"] - base,
+        "property_effect_at_fixed_geometry_h": cases["fixed_appendix4"]["event_time_h"] - base,
+        "interaction_effect_h": (cases["shrink_appendix4"]["event_time_h"]
+                                  - cases["shrink_appendix3"]["event_time_h"]
+                                  - cases["fixed_appendix4"]["event_time_h"] + base),
+    }
+    effects["geometry_order_averaged_h"] = effects["geometry_effect_at_appendix3_h"] + effects["interaction_effect_h"]/2
+    effects["property_order_averaged_h"] = effects["property_effect_at_fixed_geometry_h"] + effects["interaction_effect_h"]/2
+    effects["net_change_h"] = cases["shrink_appendix4"]["event_time_h"] - base
+    return {"cases": cases, "effects": effects}
+
+
+def write_report(path, summary):
+    e, v, t = summary["event"], summary["validation"], summary["table6"]
+    rows = ["| 时间/h | 0 cm | 0.5 cm | 1 cm | 1.5 cm | 药材表面 |", "|---:|---:|---:|---:|---:|---:|"]
+    rows += ["| " + f"{h:g}" + " | " + " | ".join("" if x is None else f"{x:.4f}" for x in row) + " |" for h, row in zip(t["times_h"], t["moisture"])]
+    report = rf'''# 计算结果：问题四
+
+本报告给出附件 2 收缩半径轨迹、附录 4 整组变物性条件下的正式结果。计算采用材料坐标 $\xi=r/R(t)$ 将运动区域固定为 $0\le\xi\le1$，并在输出时映射回实际半径；超过当前半径的固定空间位置留空，真实表面单独列出。4 h 后环境输入采用附件 1 末小时均值延拓。
+
+## 方法与结果
+
+干骨架无损失、均匀径向收缩假设下，固定域内保留 $1/R(t)^2$ 的内部传递尺度和 $1/R(t)$ 的表面阻力尺度。附录 4 的 $\rho(C),c_p(C),k(C),D(T,C)$ 整组物性统一替换，并沿用 Kirchhoff 水分通量、表面半控制体 Robin 边界和 BDF 隐式积分。
+
+全域连续事件定义为
+
+\[
+M(t)=\max_{{0\le\xi\le1}} C_h(\xi,t),\qquad
+t_* = \inf\{{t:M(t)\le0.15\}}.
+\]
+
+正式计算得到
+
+\[
+t_*={e['event_time_h']:.8f}\,\mathrm{{h}}={e['event_time_s']:.3f}\,\mathrm{{s}}.
+\]
+
+事件处最大含水率为 {e['event_max_moisture']:.10f} kg/kg，最大位置为材料坐标 $\xi={e['event_max_material_coordinate']:.6f}$。按 60 s 输出，首个严格低于阈值的后继时刻为 {e['first_strict_time_h']:.6f} h，对应连续最大含水率为 {e['first_strict_max_moisture']:.10f} kg/kg。
+
+## 表 6：收缩条件下典型位置含水率
+
+{chr(10).join(rows)}
+
+表 6 数据源为 [`../../results/q4/table6.csv`](../../results/q4/table6.csv)；工作簿中的固定空间位置在当前半径之外时留空，真实表面列始终有效。
+
+## 图件
+
+- 图 1 连续域最大含水率与阈值事件：[`../../figures/q4/q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf)。
+- 图 2 收缩过程中事件前后实际半径剖面：[`../../figures/q4/q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf)。
+- 图 3 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
+
+## 数值验证与边界
+
+空间网格 $N={v['grid']}$ 的连续事件时刻分别为 {', '.join(f'{h:.8f}' for h in v['event_time_h'])} h；相对正式网格的时间差为 {', '.join(f'{d:.3f}' for d in v['difference_s'])} s。收紧时间设置后事件变化为 {v['tight_difference_s']:.3f} s。空间最大值通过逐段求解 Kirchhoff 三次重构的导数零点，并比较节点和全部内部驻点计算；2049 点直接采样最大值与之差为 {v['profile_refinement_difference']:.3e} kg/kg。这是重构多项式的全域极值，不是原 PDE 精确解的严格误差界。
+
+正式输出的最小含水率为 {v['min_moisture']:.9f} kg/kg，干基水量收支最大残差为 {v['max_water_balance_residual']:.3e}；工作簿已完成逐格回读。上述检查验证当前收缩条件模型的离散一致性，不替代收缩假设、附录 4 经验物性、有效表面平衡浓度或环境延拓的实验验证。
+
+## 四组合机制分解
+
+四组合连续域事件时长见下表：
+
+| 情景 | 收缩 | 物性附录 | 达标时长/h |
+|---|---:|---:|---:|
+{chr(10).join(f"| {k} | {'是' if x['shrink'] else '否'} | {x['appendix']} | {x['event_time_h']:.8f} |" for k,x in summary['mechanism']['cases'].items())}
+
+相对固定半径、附录 3 基准，几何效应为 {summary['mechanism']['effects']['geometry_effect_at_appendix3_h']:.6f} h，物性效应为 {summary['mechanism']['effects']['property_effect_at_fixed_geometry_h']:.6f} h，交互效应为 {summary['mechanism']['effects']['interaction_effect_h']:.6f} h。
+
+两种加入顺序取平均后，几何贡献为 {summary['mechanism']['effects']['geometry_order_averaged_h']:.6f} h，整组物性贡献为 {summary['mechanism']['effects']['property_order_averaged_h']:.6f} h；两者相加为净变化 {summary['mechanism']['effects']['net_change_h']:.6f} h，不能再叠加交互项。收缩两组只积分至附件覆盖的 72 h；固定半径对照最长积分 168 h。该对照规定相同收缩轨迹，并非由各组水分重新预测收缩的因果试验。
+
+## 产物与复现
+
+- [`../../results/q4/result4.xlsx`](../../results/q4/result4.xlsx)：每 60 s、每 0.1 cm 的实际半径含水率和真实表面列，另插入事件根行，末行为严格达标的后继 60 s 输出。四位小数舍入后可能仍显示 0.1500，判据使用未舍入值。
+- [`../../results/q4/fields.npz`](../../results/q4/fields.npz)：未舍入场、材料坐标事件和收敛数据。
+- [`../../results/q4/table6.csv`](../../results/q4/table6.csv)：论文表 6 数据。
+- [`../../results/q4/summary.json`](../../results/q4/summary.json)：参数、来源和验证记录。
+
+运行 `make q4` 可复现本结果；原始模板不会被覆盖。
+'''
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(report, encoding="utf-8")
+
+
+def run(output_dir, report_path, figures_dir):
+    start = time.perf_counter(); output_dir.mkdir(parents=True, exist_ok=True)
+    solutions, events = {}, {}
+    for n in GRID_RUNS:
+        solutions[n] = solve_radial(n, appendix=4, shrink=True, duration_s=DURATION_S,
+                                    rtol=2e-7, atol=2e-9, max_step=300, align_environment=True)
+        events[n] = locate_event(solutions[n])
+        print(f"Q4 N={n} 事件 {events[n]['event_time_h']:.6f} h", flush=True)
+    formal, event = solutions[FORMAL_GRID], events[FORMAL_GRID]
+    tight = solve_radial(FORMAL_GRID, appendix=4, shrink=True, duration_s=DURATION_S,
+                         rtol=5e-9, atol=5e-11, max_step=60, align_environment=True)
+    tight_event = locate_event(tight)
+    first_t = float(np.ceil(event["event_time_s"] / OUTPUT_STEP_S) * OUTPUT_STEP_S)
+    if first_t <= event["event_time_s"] + 1e-7: first_t += OUTPUT_STEP_S
+    first_c = continuous_max(formal, first_t, 513)[0]
+    event["first_strict_time_s"] = first_t; event["first_strict_time_h"] = first_t / 3600.0
+    event["first_strict_max_moisture"] = first_c
+    if first_c >= THRESHOLD:
+        raise ValueError("后继输出时刻未严格达标")
+    times = np.unique(np.r_[np.arange(OUTPUT_STEP_S, first_t + 0.1, OUTPUT_STEP_S), event["event_time_s"]])
+    moisture, surface = physical_output(formal, times)
+    export_workbook(output_dir / "result4.xlsx", times, moisture, surface)
+    table_t = table_times(event["event_time_s"])
+    table_field = formal.sample(table_t, TABLE_POSITIONS_CM / 100, coordinate="radius", outside="nan")
+    table_surface = formal.sample(table_t, [1.0], coordinate="material").moisture[:, 0]
+    with (output_dir / "table6.csv").open("w", encoding="utf-8") as f:
+        f.write("时间/h,0 cm,0.5 cm,1 cm,1.5 cm,药材表面\n")
+        for h, row, s in zip(table_t / 3600, table_field.moisture, table_surface):
+            values = ",".join("" if not np.isfinite(x) else f"{x:.4f}" for x in row)
+            f.write(f"{float(h)},{values},{s:.4f}\n")
+    states = formal.state(times)
+    n = formal.model.n
+    balance = 2 * formal.model.weights @ states[n:2*n] + states[-1] - 2.55
+    profile_refine = abs(event["event_max_moisture"] - float(np.max(formal.sample(
+        [event["event_time_s"]], np.linspace(0, 1, 2049), coordinate="material").moisture)))
+    summary = {"scope": "Q4 shrinking radius appendix 4 continuous-domain event",
+               "provenance": provenance(),
+               "configuration": {"n": FORMAL_GRID, "appendix": 4, "shrink": True, "duration_s": DURATION_S,
+                                  "rtol": 2e-7, "atol": 2e-9, "max_step": 300, "threshold": THRESHOLD,
+                                  "boundary_extension": "附件1末小时均值", "output_step_s": OUTPUT_STEP_S},
+               "event": {k: v for k, v in event.items() if not isinstance(v, np.ndarray)},
+               "validation": {"grid": list(GRID_RUNS), "event_time_h": [events[n]["event_time_h"] for n in GRID_RUNS],
+                              "difference_s": [events[n]["event_time_s"] - event["event_time_s"] for n in GRID_RUNS],
+                              "tight_event_time_h": tight_event["event_time_h"],
+                              "tight_difference_s": tight_event["event_time_s"] - event["event_time_s"],
+                              "profile_refinement_difference": float(profile_refine), "min_moisture": float(np.nanmin(moisture)),
+                              "max_water_balance_residual": float(np.max(abs(balance)))},
+               "table6": {"times_h": (table_t / 3600).tolist(),
+                          "moisture": [[float(x) if np.isfinite(x) else None for x in row]
+                                       for row in np.column_stack([table_field.moisture, table_surface])]},
+               "mechanism": mechanism_runs(),
+               "workbook": verify_workbook(output_dir / "result4.xlsx", times, moisture, surface)}
+    np.savez_compressed(output_dir / "fields.npz", times_s=times, radii_cm=RADII_CM, moisture=moisture,
+                        surface_moisture=surface, event_scan_times_s=event["scan_times_s"],
+                        event_scan_max_moisture=event["scan_max_moisture"], event_profile_xi=event["event_profile_xi"],
+                        event_profile_moisture=event["event_profile_moisture"], convergence_grid=np.array(GRID_RUNS),
+                        convergence_event_time_h=np.array(summary["validation"]["event_time_h"]))
+    summary["figures"] = plot_figures(figures_dir, event, formal,
+                                       {"grid": list(GRID_RUNS), "event_time_h": summary["validation"]["event_time_h"]})
+    write_json(output_dir / "summary.json", summary); write_report(report_path, summary)
+    artifacts = [output_dir / x for x in ("result4.xlsx", "fields.npz", "summary.json", "table6.csv")]
+    artifacts += sorted(figures_dir.glob("q4_*.pdf"))
+    write_json(output_dir / "artifact_manifest.json", {"files": {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in artifacts}})
+    print(f"Q4 正式结果完成，事件 {event['event_time_h']:.8f} h，耗时 {time.perf_counter()-start:.1f} s", flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(); parser.add_argument("--output-dir", type=Path, default=ROOT / "results/q4")
+    parser.add_argument("--report", type=Path, default=ROOT / "reports/q4/RESULTS_REPORT.md")
+    parser.add_argument("--figures-dir", type=Path, default=ROOT / "figures/q4")
+    args = parser.parse_args(); run(args.output_dir, args.report, args.figures_dir)
+
+
+if __name__ == "__main__": main()
