@@ -4,9 +4,47 @@
 
 从 [A题思路分析总文档](reports/ANALYSIS_MODELING_REPORT.md) 开始阅读。它统一了题意、数据口径、四问模型、创新设计与试算证据；[计划](plan.md) 记录阶段安排，[待办](todo.md) 记录完成状态。
 
-Q1 论文正文素材见 [problem1_algorithm_analysis.md](reports/q1/problem1_algorithm_analysis.md)，四问独特性提升方案见 [uniqueness_enhancement.md](reports/uniqueness_enhancement.md)；结果、图件和数据按问题目录分别索引。
+四个问题的文件按“代码、报告、结果、图件”分目录保存；每个问题的 `reports/qX/METHOD_OVERVIEW.md` 是论文手的第一入口，先告诉你本问实际用了哪些建模方法和算法，再进入算法分析稿和结果报告。结果、图件和数据按问题目录分别索引。
 
 论文手可直接使用 [论文问题分析撰写稿](reports/论文问题分析.md)。该稿采用“总体主线—四问分析—总体求解路线”的结构，每问突出本质、难点与对策，是总文档的写作表达；Q1–Q3 方法与结果可据已验收报告入稿，Q4 数值结论仍需等待验收。计划已细化为 A 题执行流程，现有模型主线和原型继续复用。
+
+## Quick Start：论文手先看什么
+
+不需要先通读整个仓库。按下面的顺序即可快速进入任一子问题：
+
+1. **先看方法概览**：打开 `reports/qX/METHOD_OVERVIEW.md`，确认本问的建模对象、核心算法、输出和验证状态。
+2. **再看正文稿**：打开 `reports/qX/problemX_algorithm_analysis.md`（Q4 暂无正文稿），获取可直接改写进论文的公式、算法流程和段落。
+3. **核对结果**：打开 `reports/qX/RESULTS_REPORT.md`（Q4 尚未生成），确认正式数值、结果边界和验证结论。
+4. **取表格和图件**：表格从 `results/qX/` 的 CSV 获取，图件从 `figures/qX/` 的 PDF 获取；对应目录 README 会说明每个文件的用途。
+5. **需要追溯实现时**：最后再看 `code/qX/README.md` 和代码入口，不要把脚本路径、哈希或工作簿回读过程直接写进论文正文。
+
+### 四问入口地图
+
+| 问题 | 先读什么 | 再读什么 | 正式结果 | 当前状态 |
+|---|---|---|---|---|
+| Q1 预热阶段 | [Q1 方法概览](reports/q1/METHOD_OVERVIEW.md) | [Q1 正文稿](reports/q1/problem1_algorithm_analysis.md) | [Q1 结果报告](reports/q1/RESULTS_REPORT.md) | 条件模型已验证 |
+| Q2 变物性耦合 | [Q2 方法概览](reports/q2/METHOD_OVERVIEW.md) | [Q2 正文稿](reports/q2/problem2_algorithm_analysis.md) | [Q2 结果报告](reports/q2/RESULTS_REPORT.md) | 前 3 h 正式结果已验证 |
+| Q3 连续域达标事件 | [Q3 方法概览](reports/q3/METHOD_OVERVIEW.md) | [Q3 正文稿](reports/q3/problem3_algorithm_analysis.md) | [Q3 结果报告](reports/q3/RESULTS_REPORT.md) | 固定半径正式结果已验证 |
+| Q4 收缩与机制分解 | [Q4 方法概览](reports/q4/METHOD_OVERVIEW.md) | [Q4 总模型 Q4 小节](reports/ANALYSIS_MODELING_REPORT.md#7-q4材料坐标干基守恒与作用分解) | 暂无正式结果报告 | 方法设计完成，数值待推进 |
+
+### 文件用途怎么区分
+
+| 文件类型 | 论文手用法 | 不要混淆的内容 |
+|---|---|---|
+| `METHOD_OVERVIEW.md` | 快速知道“用了什么方法、解决什么难点、是否已验证” | 不是完整推导，也不是最终结果表 |
+| `problemX_algorithm_analysis.md` | 获取正文段落、公式、算法步骤和图表插入说明 | 不新增总模型之外的事实 |
+| `RESULTS_REPORT.md` | 获取正式数值、验证指标和适用边界 | 不把原型试算当正式结果 |
+| `results/qX/` | 读取 CSV、Excel、NPZ、JSON 等可追溯数据 | 不直接从 PDF 图片反抄数值 |
+| `figures/qX/` | 选取论文中的数据驱动 PDF 图件 | 不放流程图或概念图；非数据图由 `4drawio` 阶段管理 |
+| `code/qX/` | 需要复算、检查参数或理解实现时查阅 | 脚本名和内部实现细节不直接写进正文 |
+
+### 按论文写作任务进入
+
+- 写**总体问题分析**：先读 [A题思路分析总文档](reports/ANALYSIS_MODELING_REPORT.md) 和 [论文问题分析撰写稿](reports/论文问题分析.md)。
+- 写**某一问的方法与求解**：按上表先读该问 `METHOD_OVERVIEW.md`，再读对应正文稿。
+- 写**某一问的结果分析**：在对应 `RESULTS_REPORT.md` 中找正式数值，再按正文稿的“表格与图件插入说明”放置 CSV/PDF。
+- 写**模型评价与限制**：同时核对该问结果报告的验证边界和总文档的假设敏感性预检。
+- 写**Q4**：当前只能使用方法概览和总模型设计；正式结果、表 6、工作簿和图件生成后再补结果段落。
 
 ## 目录
 
@@ -54,6 +92,8 @@ make setup      # 安装锁定依赖
 make check      # 输入校验、单元测试、链接/来源/历史数值回归
 make probe      # 重算 10 组可行性和 4 组机制试算，更新 results/probes
 make q1         # 生成 Q1 工作簿、完整精度数据、验证报告和图件
+make q2         # 生成 Q2 前 3 h 工作簿、验证报告和图件
+make q3         # 生成 Q3 连续域事件工作簿、验证报告和图件
 make verify     # 执行 check，并在临时目录重算核对已有证据
 ```
 
@@ -88,4 +128,4 @@ field = solution.sample([100, 1800], [0, 0.01, 0.02])
 - [历史归档](archive/selection/README.md) 保持内容，旧结论不作为现行契约。原型模型有意改变时，应同步更新报告和回归检查，不能通过放宽容差掩盖差异。
 - 提交前运行 `make verify` 与 `git diff --check`。GitHub Actions 已配置相同检查，远程执行结果以实际运行记录为准。
 
-当前已交付条件模型下的 Q1，并完成表面浓度基准和潜热的情景复核；复核没有足够题面数据支持替换基线。result2–4、阶段降阶和论文全文尚未完成。方法与验证要求见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)，执行顺序见 [计划](plan.md)。
+当前已交付条件模型下的 Q1、Q2 和固定半径条件下的 Q3，并完成表面浓度基准和潜热的情景复核；复核没有足够题面数据支持替换基线。Q4 正式结果、阶段降阶和论文全文尚未完成。方法与验证要求见 [总文档](reports/ANALYSIS_MODELING_REPORT.md)，执行顺序见 [计划](plan.md)。
