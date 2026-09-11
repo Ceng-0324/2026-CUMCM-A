@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "n": 256,
+      "linear": {
+        "interpolator": "linear",
+        "n": 256,
+        "event_time_h": 51.092352523220214,
+        "event_time_s": 183932.46908359276
+      },
+      "pchip": {
+        "interpolator": "pchip",
+        "n": 256,
+        "event_time_h": 51.08881272965267,
+        "event_time_s": 183919.72582674964
+      },
+      "delta_s_pchip_minus_linear": -12.743256843124982
+    },
+    {
+      "n": 512,
+      "linear": {
+        "interpolator": "linear",
+        "n": 512,
+        "event_time_h": 51.092203024691976,
+        "event_time_s": 183931.9308888911
+      },
+      "pchip": {
+        "interpolator": "pchip",
+        "n": 512,
+        "event_time_h": 51.08866211422786,
+        "event_time_s": 183919.1836112203
+      },
+      "delta_s_pchip_minus_linear": -12.74727767080185
+    }
+  ]
+}

@@ -2,10 +2,10 @@
   "files": {
     "results/q4/result4.xlsx": "7b59f75b4fac9ee01d787f6bbff8b6c3f9fcdd5cb55bc4575736b4db276af9b0",
     "results/q4/fields.npz": "adf1e340ddfda66351cf32cbf0c493d175e5788770747a2a47a4052737b772a0",
-    "results/q4/summary.json": "70f1b1d2e907422879c956711686c3f9958498ad6f66c068eedb78b0cd8102b5",
+    "results/q4/summary.json": "5e7a84183ee6679687f79ddf835dcc94ad0cb16587ffbdb6297e789c5f5422a6",
     "results/q4/table6.csv": "51efdbadcfcc2bfde38b46ec1f5b065b54271eee8c8030c4bf52895eee967538",
-    "figures/q4/q4_convergence.pdf": "11261ff068ac7a1f6359dd23b9f5286129590e085edfb159e6dcb17f57726b27",
-    "figures/q4/q4_shrink_profiles.pdf": "4720e020579d79803c4de9e9215226c162af82afa4ff3d3a51f21181e69f0230",
-    "figures/q4/q4_threshold_event.pdf": "9f4b9cb99f8e723fb2030687fa12b22c317aba158aaaf364dfa4d253ddfb5237"
+    "figures/q4/q4_convergence.pdf": "40ce5de80aa29ed5572eafa647c6f2904179b7d431d598de83ddf53327a09b33",
+    "figures/q4/q4_shrink_profiles.pdf": "94eedfd8c1eaae95cfc57ed2bec3f38340c2027fbc813c7a62ec6dcc7893bcc7",
+    "figures/q4/q4_threshold_event.pdf": "9ea7013f4fc7ed125665cf286a3bccc165cb86b3317b2ef936b4a87cc938694f"
   }
 }

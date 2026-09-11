@@ -40,11 +40,11 @@ def provenance():
             "code_sha256": {p: sha256((ROOT / p).read_bytes()).hexdigest() for p in sources}}
 
 
-def continuous_max(solution, t, points=513):
+def continuous_max(solution, t, points=513, *, return_profile=True):
+    """Return the reconstructed continuous maximum and optionally its profile."""
     xi = np.linspace(0.0, 1.0, points)
-    sample = solution.sample([float(t)], xi, coordinate="material")
-    c = sample.moisture[0]
     if t == 0:
+        c = np.full(points, 2.55)
         return 2.55, 0.0, xi, c
     model, n = solution.model, solution.model.n
     y = solution.state([float(t)])[:, 0]
@@ -56,6 +56,9 @@ def continuous_max(solution, t, points=513):
     values = pk(candidates)
     i = int(np.argmax(values))
     maximum = inverse_kirchhoff(values[i], a, 2*max(2.55, float(y[n:2*n].max()), cs))
+    if not return_profile:
+        return float(maximum), float(candidates[i]), None, None
+    c = solution.sample([float(t)], xi, coordinate="material").moisture[0]
     return float(maximum), float(candidates[i]), xi, c
 
 
@@ -67,14 +70,15 @@ def spline_candidates(spline):
 
 def locate_event(solution, scan_step=SCAN_STEP_S, profile_points=257):
     times = np.unique(np.minimum(np.arange(0.0, solution.end_s + scan_step, scan_step), solution.end_s))
-    values = np.array([continuous_max(solution, t, profile_points)[0] for t in times])
+    values = np.array([continuous_max(solution, t, profile_points, return_profile=False)[0]
+                       for t in times])
     crossing = np.flatnonzero(((values[:-1] - THRESHOLD) >= 0) & ((values[1:] - THRESHOLD) < 0))
     if not len(crossing):
         raise RuntimeError(f"在 {solution.end_s/3600:g} h 内未找到连续域达标事件")
     i = int(crossing[0])
 
     def f(t):
-        return continuous_max(solution, t, profile_points)[0] - THRESHOLD
+        return continuous_max(solution, t, profile_points, return_profile=False)[0] - THRESHOLD
 
     event_s = float(brentq(f, times[i], times[i + 1], xtol=1e-5, rtol=1e-12))
     mc, xi, p, c = continuous_max(solution, event_s, 1025)
