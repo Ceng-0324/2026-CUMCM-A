@@ -11,6 +11,7 @@
 | [`q3/`](q3/) | Q3 方法概览、连续域达标事件、表 5 与图件 | 已完成固定半径条件模型 |
 | [`q4/`](q4/) | Q4 方法概览、算法分析和收缩机制结果报告 | 正式结果已完成 |
 | [`PAPER_DATA_PACKAGE.md`](PAPER_DATA_PACKAGE.md) | 四问论文数据、表格、图件和正文入口总索引 | 论文组稿入口 |
+| [`DRAWIO_REPORT.md`](DRAWIO_REPORT.md) | 非数据方法图源文件、PDF、依据和正文插入建议 | 4drawio 交付报告 |
 | [`PAPER_DATA_PACKAGE.md`](PAPER_DATA_PACKAGE.md) | 四问论文数据、表格、图件和正文入口总索引 | 论文组稿入口 |
 
 正式结果报告按问题存放，避免不同问题的表格、图件和结论混在同一文件夹。

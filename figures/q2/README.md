@@ -5,3 +5,5 @@
 - `q2_convergence.pdf`：1024→2048 网格在表格时刻的最大场差异。
 
 图件由 `code/q2/problem2.py` 从 `results/q2/fields.npz` 生成。
+
+方法图：`fig_q2_coupling.drawio` / `fig_q2_coupling.pdf`，展示 Q2 温度场、含水率场与物性反馈关系。

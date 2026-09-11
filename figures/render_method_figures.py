@@ -1,0 +1,45 @@
+"""Render the small DrawIO method diagrams through a browser print pass."""
+from pathlib import Path
+from xml.etree import ElementTree as ET
+import html, re
+import sys
+sys.path.insert(0, '/private/tmp/cumcm_reportlab')
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+ROOT = Path(__file__).resolve().parent
+FONT = '/System/Library/AssetsV2/com_apple_MobileAsset_Font8/a304e3396d019087ab67af77f5e398977529007d.asset/AssetData/Libian.ttc'
+pdfmetrics.registerFont(TTFont('Chinese', FONT, subfontIndex=0))
+
+def render(src: Path):
+    root = ET.parse(src).getroot()
+    cells = {c.attrib['id']: c for c in root.iter('mxCell') if c.attrib.get('vertex') == '1'}
+    vertices = {}
+    for ident, cell in cells.items():
+        geo = next(iter(cell.findall('mxGeometry')), None)
+        if geo is None: continue
+        vertices[ident] = tuple(float(geo.attrib.get(k, 0)) for k in ('x','y','width','height'))
+    maxx = max((x+w for x,y,w,h in vertices.values()), default=1200) + 40
+    maxy = max((y+h for x,y,w,h in vertices.values()), default=700) + 40
+    out=src.with_suffix('.pdf')
+    cv=canvas.Canvas(str(out), pagesize=(maxx,maxy)); cv.setFont('Chinese', 14)
+    for edge in root.iter('mxCell'):
+        if edge.attrib.get('edge') != '1': continue
+        s, t = vertices.get(edge.attrib.get('source')), vertices.get(edge.attrib.get('target'))
+        if not s or not t: continue
+        x1,y1,w1,h1=s; x2,y2,w2,h2=t
+        ax, ay = x1+w1, y1+h1/2; bx, by=x2, y2+h2/2
+        if bx < ax: ax, bx = x1, x2+w2
+        cv.setStrokeColorRGB(.38,.49,.55); cv.setLineWidth(1.5); cv.line(ax,maxy-ay,bx,maxy-by)
+    colors = {'#e8eef5':'#e8eef5','#edf3e9':'#edf3e9','#f7f0df':'#f7f0df','#f1e8e8':'#f1e8e8','#fbe5d6':'#fbe5d6','#d9eaf7':'#d9eaf7'}
+    for ident, cell in cells.items():
+        x,y,w,h=vertices[ident]; style=cell.attrib.get('style',''); fill=re.search(r'fillColor=([^;]+)',style); fill=colors.get(fill.group(1) if fill else '', '#ffffff')
+        cv.setFillColorRGB(0.93,0.95,0.96); cv.setStrokeColorRGB(.38,.49,.55); cv.roundRect(x,maxy-y-h,w,h,5,fill=1,stroke=1)
+        lines = cell.attrib.get('value','').replace('&#xa;','\n').split('\n')
+        for i,line in enumerate(lines):
+            cv.setFillColorRGB(.15,.2,.22); cv.drawCentredString(x+w/2,maxy-(y+h/2+(i-(len(lines)-1)/2)*21)-5,line)
+    cv.save()
+
+for path in [ROOT/'fig_roadmap.drawio', ROOT/'fig_question_progression.drawio', ROOT/'q2'/'fig_q2_coupling.drawio', ROOT/'q4'/'fig_q4_material_event.drawio']:
+    render(path)

@@ -7,4 +7,6 @@
 | [`q3/`](q3/) | Q3 事件与误差图 | 已完成 |
 | [`q4/`](q4/) | Q4 收缩和机制图 | 已完成 |
 
-数据型图件由对应问题的生成脚本产生；流程图和技术路线图另由 `4drawio` 阶段管理。
+| 根目录 | `fig_roadmap.pdf`、`fig_question_progression.pdf`：总体技术路线与四问递进关系 | 已完成 |
+
+数据型图件由对应问题的生成脚本产生；非数据方法图保留 `.drawio` 源文件和 PDF，由 `reports/DRAWIO_REPORT.md` 说明依据与插入位置。

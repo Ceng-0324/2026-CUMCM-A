@@ -38,7 +38,7 @@
 | `problemX_algorithm_analysis.md` | 获取正文段落、公式、算法步骤和图表插入说明 | 不新增总模型之外的事实 |
 | `RESULTS_REPORT.md` | 获取正式数值、验证指标和适用边界 | 不把原型试算当正式结果 |
 | `results/qX/` | 读取 CSV、Excel、NPZ、JSON 等可追溯数据 | 不直接从 PDF 图片反抄数值 |
-| `figures/qX/` | 选取论文中的数据驱动 PDF 图件 | 不放流程图或概念图；非数据图由 `4drawio` 阶段管理 |
+| `figures/qX/` | 选取本问题的数据图与方法图 PDF；`.drawio` 为可编辑源文件 | 数据图来自 `3coding-visual`，方法图依据与插入位置见 `reports/DRAWIO_REPORT.md` |
 | `code/qX/` | 需要复算、检查参数或理解实现时查阅 | 脚本名和内部实现细节不直接写进正文 |
 
 ### 按论文写作任务进入

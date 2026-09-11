@@ -44,7 +44,7 @@
 
 ## 3. 流程与模型图示 — 4drawio
 
-- [ ] 方法稳定后按需绘制技术路线/流程图，生成 DrawIO、PDF 与 DRAWIO_REPORT
+- [x] 方法稳定后按需绘制技术路线/流程图，生成 DrawIO、PDF 与 DRAWIO_REPORT
 
 ## 4. 论文撰写 — 5writing
 
