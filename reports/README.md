@@ -4,6 +4,7 @@
 |---|---|---|
 | [`ANALYSIS_MODELING_REPORT.md`](ANALYSIS_MODELING_REPORT.md) | A 题唯一模型与假设事实源 | 持续维护 |
 | [`论文问题分析.md`](论文问题分析.md) | 论文手使用的问题分析素材 | Q1 可交接，Q2–Q4 待结果 |
+| [`uniqueness_enhancement.md`](uniqueness_enhancement.md) | A题四问正文独特性提升与证据边界 | 持续维护 |
 | [`q1/`](q1/) | Q1 正式结果报告和算法分析正文稿 | 已完成条件模型验证 |
 | `q2/`、`q3/`、`q4/` | 对应问题结果报告 | 待生成 |
 

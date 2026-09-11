@@ -4,7 +4,7 @@
 
 从 [A题思路分析总文档](reports/ANALYSIS_MODELING_REPORT.md) 开始阅读。它统一了题意、数据口径、四问模型、创新设计与试算证据；[计划](plan.md) 记录阶段安排，[待办](todo.md) 记录完成状态。
 
-Q1 论文正文素材见 [problem1_algorithm_analysis.md](reports/q1/problem1_algorithm_analysis.md)，结果、图件和数据按问题目录分别索引。
+Q1 论文正文素材见 [problem1_algorithm_analysis.md](reports/q1/problem1_algorithm_analysis.md)，四问独特性提升方案见 [uniqueness_enhancement.md](reports/uniqueness_enhancement.md)；结果、图件和数据按问题目录分别索引。
 
 论文手可直接使用 [论文问题分析撰写稿](reports/论文问题分析.md)。该稿采用“总体主线—四问分析—总体求解路线”的结构，每问突出本质、难点与对策，是总文档的写作表达；Q1 方法与结果可据已验收报告入稿，Q2–Q4 数值结论仍需等待验收。计划已细化为 A 题执行流程，现有模型主线和原型继续复用。
 
