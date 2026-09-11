@@ -1,0 +1,12 @@
+{
+  "files": {
+    "results/q2/result2.xlsx": "0625fa49cbbfed72c20942c959a646fba2f9baf06ae4bf51eedb781aa33ae7df",
+    "results/q2/fields.npz": "a9fbeac38480b60758172d7c4e6bbb6fc278d8afbb5ae916205794e9c9ea21f4",
+    "results/q2/summary.json": "e25c836ba41969bd6e0bdd046f20d6b005bd7ddac3dc3f02147e2664fb8093ae",
+    "results/q2/table3.csv": "afa8446dd8feda252d6448494e0ae2492ade924db6ae04d95204a9c02f31f4fe",
+    "results/q2/table4.csv": "38a2001dd654adb1b4243666ac837a249fbaf48dcd9e0502c733c6fb4485e159",
+    "figures/q2/q2_convergence.pdf": "88215e3908f5553d7c5da8becf56b7e874c0e32e13a03e32ed0cb75fa3707e3f",
+    "figures/q2/q2_history.pdf": "0865cb4ae8e8ad867daafe510a76c446711e085eabd3396e9d1e3d1c16e48cd8",
+    "figures/q2/q2_profiles.pdf": "6295180584a64b204b5972ce0d63629d845fc3e0ce04758dbe20fd43eb0c5b17"
+  }
+}
