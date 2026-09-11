@@ -1,3 +1,3 @@
 # Q3 结果
 
-Q3 连续域达标事件正式结果尚未生成。完成后在此存放 `result3.xlsx`、事件定位数据、验证摘要和对应产物清单。
+Q3 固定半径、附录 3 变物性条件下的连续域达标事件已完成。正式事件、表 5、工作簿和验证记录见 [`summary.json`](summary.json)、[`table5.csv`](table5.csv) 和 [`result3.xlsx`](result3.xlsx)；图件位于 [`../../figures/q3/`](../../figures/q3/)。
