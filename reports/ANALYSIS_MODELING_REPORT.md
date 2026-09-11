@@ -256,7 +256,7 @@ U_t=\frac1{R(t)^2\xi}\partial_\xi\left(\xi D(U,\Theta)U_\xi\right),\qquad
 
 ## 8. 已有证据与当前实现边界
 
-[model.py](../code/common/model.py) 提供统一通量、BDF 和连续场求解接口；[problem1.py](../code/q1/problem1.py) 生成并验证 Q1 正式格式结果；[结果报告](q1/RESULTS_REPORT.md) 记录 Q1 数据与适用条件。[probes.py](../code/common/probes.py) 复用同一核心，但保留历史最大单元事件和单元采样口径。以下两问试算表仍来自 [feasibility.json](../results/probes/feasibility.json) 和 [mechanism.json](../results/probes/mechanism.json)，迁移后数值回归通过。
+[model.py](../code/common/model.py) 提供统一通量、BDF 和连续场求解接口；[problem1.py](../code/q1/problem1.py) 生成并验证 Q1，[problem2.py](../code/q2/problem2.py) 生成并验证 Q2 前 3 h 正式结果；[Q1 结果报告](q1/RESULTS_REPORT.md) 和 [Q2 结果报告](q2/RESULTS_REPORT.md) 分别记录数据与适用条件。[probes.py](../code/common/probes.py) 复用同一核心，但保留历史最大单元事件和单元采样口径。以下两问试算表仍来自 [feasibility.json](../results/probes/feasibility.json) 和 [mechanism.json](../results/probes/mechanism.json)，迁移后数值回归通过。
 
 | 单元数 | Q3 事件 h | Q4 事件 h |
 | ---: | ---: | ---: |
@@ -271,7 +271,7 @@ U_t=\frac1{R(t)^2\xi}\partial_\xi\left(\xi D(U,\Theta)U_\xi\right),\qquad
 
 历史原型终止事件仍取**最大单元浓度**，其字段 center_T_C 实为首个单元温度。Q1 新接口则输出重构中心与真实表面，但尚未认证 Q3/Q4 全程连续域最大值。公共求解器记录浓度下限保护次数，Q1 本次计算未触发；不能静默裁剪来掩盖负解。
 
-已完成 Q1 连续中心/表面与全场采样、表 1/2、result1.xlsx 逐格回读、解析及加密验证、三张数据图；仅在本报告的简化模型下成立。未完成项为 Q2 正式耦合全场、Q3 连续域事件、Q4 长时收缩及输出、长期物理假设敏感性、四组合完整收敛、阶段识别/降阶、result2–4、其余图表和论文全文。
+已完成 Q1 连续中心/表面与全场采样、表 1/2、result1.xlsx 逐格回读、解析及加密验证、三张数据图；已完成 Q2 前 3 h 附录 3 变物性耦合、表 3/4、result2.xlsx、三张数据图及网格/时间/收支验证。上述结果仅在本报告的条件模型下成立。未完成项为 Q3 连续域事件、Q4 长时收缩及输出、长期物理假设敏感性、四组合完整收敛、阶段识别/降阶、result3–4、其余图表和论文全文。
 
 ## 代码实现任务清单
 
@@ -279,7 +279,7 @@ U_t=\frac1{R(t)^2\xi}\partial_\xi\left(\xi D(U,\Theta)U_\xi\right),\qquad
 | --- | --- | --- | --- | --- |
 | 必做：物理闭合 | 题面、附录、假设预检 | 确定的方程与有效边界解释 | 单位与干基守恒推导，关键替代假设对照 | ρ/ρ_d 分离、潜热与端部边界明确 |
 | Q1 已完成（条件模型） | 附件 1、附录 2 | 1800 s 内 T/C、表 1/2、result1.xlsx | 积分通量有限体积+BDF | 中心/表面、全场加密、独立热基准、收支及模板回读已通过 |
-| 必做：Q2 | 附件 1、附录 3、共同初值 | 全过程 T/C、3 h 表 3/4、result2.xlsx | 同一框架变物性耦合 | 不拼 Q1；K/°C 区分；导出截止口径明确 |
+| Q2 已完成（前 3 h） | 附件 1、附录 3、共同初值 | 全过程 T/C、3 h 表 3/4、result2.xlsx | 同一框架变物性耦合 | 不拼 Q1；K/°C 区分；导出截止口径明确 |
 | 必做：Q3 | Q2 全耦合解 | 达标时刻及误差、表 5、result3.xlsx | 连续最大值重构、密集输出、事件求根 | 正性、空间/时间误差、阈值严格不等式说明 |
 | 必做：Q4 | 附件 2、附录 4 | R(t)、达标时长、表 6、result4.xlsx | 固定材料域、规定收缩轨迹 | 干基通量平衡、真实半径/表面、插值敏感性 |
 | 高价值：机制对照 | 四组合配置 | 时长、贡献及交互图表 | 两因素顺序平均与交互差分 | 四组均加密，交互不重复计数 |
