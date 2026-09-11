@@ -1,0 +1,26 @@
+{
+  "plot": {
+    "matplotlib": "3.10.8",
+    "font_family": "STHeiti",
+    "pdf_fonttype": 42,
+    "files": [
+      "q1_profiles.pdf",
+      "q1_history.pdf",
+      "q1_convergence.pdf"
+    ],
+    "data_sources": [
+      "fields.npz",
+      "summary.json"
+    ]
+  },
+  "files": {
+    "fields.npz": "6295e749ff0e8f3501478c0819f79cda8e7dfec6be2d5bfd4e2b260e7d19eff2",
+    "result1.xlsx": "8216bc8f0d8c28de34f5a7edb72038554201d49cbd26380dea079455f5a077c7",
+    "summary.json": "0ee162768312783cede2708ab4c1c48cae64d2d785d8ebcb3062f62ef3f974b1",
+    "table1.csv": "5920865da8f1f6897524e39c6b159057e7d9249439f488f3cac415f57503d315",
+    "table2.csv": "1a2aee3826372b4a81e7d507a7bf3dbe0833116e11da94ff03568d5e83159bff",
+    "q1_convergence.pdf": "06a31ad9dee4bc2336d48b10e7c2c5f8a87dbc2d5a89b0f8a05e7390ec7876ed",
+    "q1_history.pdf": "728792a88eaf9d98ead71a09c4c7714f9000ca3064b7c60a3f8aa07cf7e31073",
+    "q1_profiles.pdf": "da1d5f716e447a246d373e80ff4b96cbcf38316c14c8e88963fc07974ae097b7"
+  }
+}

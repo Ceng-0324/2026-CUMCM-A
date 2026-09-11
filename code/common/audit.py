@@ -6,6 +6,9 @@ import math
 from pathlib import Path
 import statistics
 
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from data_io import ROOT, input_rows, read_xlsx, verify_inputs, write_json
 
 

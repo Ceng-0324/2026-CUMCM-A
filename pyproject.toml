@@ -4,8 +4,10 @@ version = "0.1.0"
 description = "2026 CUMCM A 题：药材烘干建模与可复现计算"
 requires-python = ">=3.12,<3.15"
 dependencies = [
+    "matplotlib==3.10.8",
     "numpy==2.4.4",
     "scipy==1.17.1",
+    "xlsxwriter==3.2.9",
 ]
 
 [tool.uv]

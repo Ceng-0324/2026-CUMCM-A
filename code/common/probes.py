@@ -10,6 +10,9 @@ import platform
 import numpy as np
 import scipy
 
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from data_io import ROOT, verify_inputs, write_json
 from model import analytic_radial_check, probe_a
 
@@ -27,7 +30,7 @@ ASSUMPTIONS = [
 
 def provenance() -> dict:
     files = verify_inputs()
-    code = ['code/data_io.py', 'code/model.py', 'code/probes.py']
+    code = ['code/common/data_io.py', 'code/common/model.py', 'code/common/probes.py']
     return {
         'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__,
         'input_sha256': {e['path']: e['sha256'] for e in files},

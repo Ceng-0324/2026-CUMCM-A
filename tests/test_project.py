@@ -11,7 +11,7 @@ import numpy as np
 from scipy.integrate import quad
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / 'code'))
+sys.path.insert(0, str(ROOT / 'code/common'))
 from audit import audit_inputs
 from data_io import verify_inputs
 from model import analytic_radial_check, divergence, kirchhoff, material_parameters, probe_a, radial_geometry

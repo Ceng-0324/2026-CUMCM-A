@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 .venv/
 .uv-cache/
+.mpl-cache/
 .pytest_cache/
 .ruff_cache/
 .coverage

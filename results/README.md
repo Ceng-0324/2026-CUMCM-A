@@ -2,8 +2,11 @@
 
 - `probes/feasibility.json`：32/64/128 网格、紧容差与环境延拓共 10 次原型试算，另含解析基准。
 - `probes/mechanism.json`：几何与整组物性四组合试算及作用分解。
+- [q1/result1.xlsx](q1/result1.xlsx)：Q1 正式格式输出，两张工作表均为 1–1800 s、21 个半径位置，四位小数。
+- `q1/fields.npz`：未舍入的逐秒场、初值、论文表格与剖面/独立温度基准数据；`q1/summary.json` 保存参数、误差、验收及来源。
+- [q1/table1.csv](q1/table1.csv)、[q1/table2.csv](q1/table2.csv)：Q1 论文表格；`q1/artifact_manifest.json` 记录结果及三张 PDF 的哈希。
 - `local/`：临时实验、题面文本提取等本机产物，Git 忽略。
 
-运行 `make probe` 更新跟踪的证据；运行 `make verify` 在临时目录重算并比较，不覆盖这些文件。JSON 包含输入/计算代码哈希、环境版本和假设。运行耗时只打印到终端，避免每次复算造成无意义版本差异。
+运行 `make probe` 更新原型证据，`make q1` 生成 Q1 结果、报告及图件；运行 `make verify` 在临时目录重算原型及 Q1 并比较，不覆盖这些文件。JSON 包含输入/计算代码哈希、环境版本和假设。运行耗时只打印到终端，避免每次复算造成无意义版本差异。
 
-这些是可行性原型，事件取最大单元浓度，尚未认证连续域最大值或正式四位小数精度。正式 result1–4 尚未生成；输入目录中的同名文件是原始模板。模型口径与待办见 [总文档](../reports/ANALYSIS_MODELING_REPORT.md)。
+`probes/` 仍是可行性原型，事件取最大单元浓度，尚未认证连续域最大值或正式四位小数精度。Q1 已完成条件径向模型下的数值验证，详见 [结果报告](../reports/q1/RESULTS_REPORT.md)；Q2–Q4 正式结果尚未生成。输入目录中的同名文件是原始模板。模型口径与待办见 [总文档](../reports/ANALYSIS_MODELING_REPORT.md)。

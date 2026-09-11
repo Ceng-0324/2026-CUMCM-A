@@ -8,7 +8,7 @@ import posixpath
 import xml.etree.ElementTree as ET
 from zipfile import ZipFile
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 INPUT_DIR = ROOT / "problemA"
 MANIFEST = INPUT_DIR / "manifest.json"
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}

@@ -12,6 +12,11 @@ import sys
 import tempfile
 from urllib.parse import unquote
 
+import numpy as np
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT/'code/common'))
+sys.path.insert(0, str(ROOT/'code/q1'))
 from data_io import ROOT, verify_inputs
 
 
@@ -25,15 +30,20 @@ def read(path):
 
 
 def check_links():
-    docs = [*ROOT.glob('*.md'), *(ROOT / 'reports').glob('*.md'), ROOT / 'results/README.md']
+    docs = [ROOT / name for name in ('README.md', 'AGENTS.md', 'plan.md', 'todo.md')]
+    for directory in ('code', 'figures', 'reports', 'results'):
+        docs.extend((ROOT / directory).rglob('*.md'))
     count = 0
     for doc in docs:
+        relative = doc.relative_to(ROOT)
+        if relative.parts[:2] == ('results', 'local') or relative.parts[:1] == ('archive',):
+            continue
         content = doc.read_text(encoding='utf-8')
         for target in re.findall(r'\[[^\]]*\]\(([^)]+)\)', content):
             if target.startswith(('https://', 'http://', '#', 'mailto:')):
                 continue
             local = unquote(target.split('#', 1)[0].strip('<>'))
-            require((doc.parent / local).exists(), f'{doc.relative_to(ROOT)} 链接失效：{target}')
+            require((doc.parent / local).exists(), f'{relative} 链接失效：{target}')
             count += 1
     return count
 
@@ -67,7 +77,7 @@ def check_evidence():
         data = read(ROOT / f'results/probes/{name}.json')
         source = data['provenance']
         require(source['input_sha256'] == inputs, f'{name} 输入来源不一致')
-        require(set(source['code_sha256']) == {'code/data_io.py', 'code/model.py', 'code/probes.py'},
+        require(set(source['code_sha256']) == {'code/common/data_io.py', 'code/common/model.py', 'code/common/probes.py'},
                 f'{name} 代码来源记录不完整')
         for path, digest in source['code_sha256'].items():
             require(sha256((ROOT / path).read_bytes()).hexdigest() == digest,
@@ -101,6 +111,40 @@ def check_evidence():
     return results
 
 
+def check_q1():
+    from problem1 import LIMITS, SOURCES, TABLE_TIMES, TABLE_COLUMNS, verify_workbook, table_markdown
+    directory = ROOT/'results/q1'
+    summary = read(directory/'summary.json')
+    source = summary['provenance']
+    require(source['input_sha256'] == {e['path']: e['sha256'] for e in verify_inputs()},
+            'Q1 输入来源已改变')
+    require(set(source['code_sha256']) == set(SOURCES), 'Q1 代码来源记录不完整')
+    for path, digest in source['code_sha256'].items():
+        require(sha256((ROOT/path).read_bytes()).hexdigest() == digest,
+                f'Q1 代码已变化：{path}；审查后运行 make q1')
+    manifest = read(directory/'artifact_manifest.json')
+    outputs = {'result1.xlsx', 'fields.npz', 'summary.json', 'table1.csv', 'table2.csv'}
+    figures = {'q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf'}
+    require(set(manifest['files']) == outputs | figures, 'Q1 产物清单缺失或包含未声明文件')
+    for name, digest in manifest['files'].items():
+        path = ROOT/'figures/q1'/name if name in figures else directory/name
+        require(path.is_file() and sha256(path.read_bytes()).hexdigest() == digest,
+                f'Q1 产物缺失或内容改变：{name}')
+    v = summary['validation']
+    require(v['passed'] and v['targets'] == LIMITS, 'Q1 验收目标不一致')
+    with np.load(directory/'fields.npz') as data:
+        require(data['temperature_C'].shape == data['moisture'].shape == (1800, 21), 'Q1 全场形状错误')
+        require(np.all(np.isfinite(data['temperature_C'])) and np.all(data['moisture'] > 0), 'Q1 非法状态')
+        verify_workbook(directory/'result1.xlsx', data['temperature_C'], data['moisture'])
+        report = (ROOT/'reports/q1/RESULTS_REPORT.md').read_text(encoding='utf-8')
+        for key in ['temperature_C', 'moisture']:
+            table = data[key][TABLE_TIMES-1][:, TABLE_COLUMNS]
+            np.testing.assert_allclose(table, summary['tables'][key], atol=1e-12, rtol=0)
+            require(table_markdown(TABLE_TIMES, summary['tables']['radii_cm'], table) in report,
+                    'Q1 报告数值表与计算证据不一致')
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--recompute', action='store_true')
@@ -110,14 +154,22 @@ def main():
         require((ROOT / name).is_file(), f'缺少工程文件：{name}')
     link_count = check_links()
     recorded = check_evidence()
+    check_q1()
     if args.recompute:
         with tempfile.TemporaryDirectory(prefix='cumcm-a-verify-') as tmp:
-            subprocess.run([sys.executable, str(ROOT / 'code/probes.py'), '--mode', 'all',
+            subprocess.run([sys.executable, str(ROOT / 'code/common/probes.py'), '--mode', 'all',
                             '--output-dir', tmp], check=True, cwd=ROOT)
             for name, expected in recorded.items():
                 compare_numbers(read(Path(tmp) / f'{name}.json'), expected, f'recompute.{name}')
         print('临时重算通过：14 次原型试算，记录结果未被覆盖。')
-    print(f'工程检查通过：{link_count} 处本地文档链接、输入/代码来源和历史数值回归。')
+        with tempfile.TemporaryDirectory(prefix='cumcm-q1-verify-') as tmp:
+            subprocess.run([sys.executable, str(ROOT/'code/q1/problem1.py'), '--output-dir', tmp,
+                            '--report', str(Path(tmp)/'REPORT.md'), '--no-figures'], check=True, cwd=ROOT)
+            with np.load(Path(tmp)/'fields.npz') as actual, np.load(ROOT/'results/q1/fields.npz') as expected:
+                for key in ['temperature_C', 'moisture', 'profile_temperature_C', 'profile_moisture']:
+                    np.testing.assert_allclose(actual[key], expected[key], rtol=0, atol=3e-7)
+        print('Q1 临时重算通过：全场、独立基准、加密与工作簿回读；已有产物未被覆盖。')
+    print(f'工程检查通过：{link_count} 处本地文档链接、输入/代码来源、历史回归及 Q1 产物与工作簿。')
 
 
 if __name__ == '__main__':
