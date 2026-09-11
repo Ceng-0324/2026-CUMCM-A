@@ -182,9 +182,7 @@ q(0)\approx\frac{9q_0-q_1}{8},
 
 ## 7. 正文表格与图件插入说明
 
-本节是给论文手的排版指令，不是论文正文。每项都明确“放在哪里、插入什么、数据从哪里来、插入后接什么分析”。本节列出的结果文件路径均相对于当前文档 `reports/q1/problem1_algorithm_analysis.md`。
-
-如果最终章节文件位于 `paper/sections/5_problem1.tex`，图件在 LaTeX 中应使用 `../../figures/q1/...`；如果章节内容直接写在 `paper/main.tex`，则应改为 `../figures/q1/...`。表格数值建议从 CSV 复制到 `tabular` 环境，不能从 PDF 图或截图反抄。
+本节是给论文手的排版指令，不是论文正文。每项都明确“放在哪里、插入什么、数据从哪里来、插入后接什么分析”。文件路径均相对于当前文档 `reports/q1/problem1_algorithm_analysis.md`，表格数值应以 CSV 为准，不能从 PDF 图或截图反抄。
 
 ### 7.1 表 1：预热阶段温度
 
@@ -193,8 +191,6 @@ q(0)\approx\frac{9q_0-q_1}{8},
 **表题：** 表 1 预热阶段不同位置的温度（°C）。
 
 **数据源：** [`../../results/q1/table1.csv`](../../results/q1/table1.csv)；未舍入全场见 [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
-
-**LaTeX 放置示意：** 在 `5_problem1.tex` 中使用 `\begin{table}[H]...\end{table}`，表格内容由上述 CSV 转写；表格标签建议为 `tab:q1-temperature`。
 
 **表后衔接句：** “由表 1 可见，温度由表面向中心逐渐滞后，1800 s 时中心与表面的温差仍为 3.2103 °C，说明预热阶段尚未达到径向热平衡。”
 
@@ -218,8 +214,6 @@ q(0)\approx\frac{9q_0-q_1}{8},
 
 **数据源：** [`../../results/q1/table2.csv`](../../results/q1/table2.csv)；未舍入全场见 [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
 
-**LaTeX 放置示意：** 使用 `\begin{table}[H]...\end{table}`，表格标签建议为 `tab:q1-moisture`。表 2 与表 1 使用相同的时间和半径列，不要自行改变单位或小数位。
-
 **表后衔接句：** “表 2 显示，1800 s 时表面含水率已降至 1.5102 kg/kg，而中心仍为 2.5500 kg/kg，水分迁移的空间滞后比温度场更明显。”
 
 **表 2 预热阶段不同位置的含水率（kg/kg）**
@@ -238,11 +232,11 @@ q(0)\approx\frac{9q_0-q_1}{8},
 
 **插入位置：** 放在表 2 后。插图前说明“表格只列出五个半径位置，图 1 给出完整径向剖面”；插图后解释不同时间的中心—表面梯度。
 
-**插入文件：** [`../../figures/q1/q1_profiles.pdf`](../../figures/q1/q1_profiles.pdf)。论文章节文件为 `paper/sections/5_problem1.tex` 时使用 `../../figures/q1/q1_profiles.pdf`；若写在 `paper/main.tex`，使用 `../figures/q1/q1_profiles.pdf`。
+**插入文件：** [`../../figures/q1/q1_profiles.pdf`](../../figures/q1/q1_profiles.pdf)。
 
 **图题：** 图 1 预热阶段不同时间的径向温度与含水率剖面。
 
-**LaTeX 放置示意：** `\begin{figure}[H]`、`\includegraphics[width=0.90\linewidth]{../../figures/q1/q1_profiles.pdf}`、`\caption{...}`、`\label{fig:q1-profiles}`。图中数据源为 [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
+**图中数据源：** [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
 
 **图后衔接句：** “图 1 表明，温度和含水率均沿半径方向形成梯度，且表层响应先于中心，验证了采用径向分布而非平均状态描述预热过程的必要性。”
 
@@ -250,11 +244,11 @@ q(0)\approx\frac{9q_0-q_1}{8},
 
 **插入位置：** 放在图 1 的解释段之后，用于把空间剖面转化为时间响应比较。正文先指出比较对象为中心、$1\,\mathrm{cm}$ 位置和真实表面，再插入图 2。
 
-**插入文件：** [`../../figures/q1/q1_history.pdf`](../../figures/q1/q1_history.pdf)。LaTeX 相对路径规则同图 1。
+**插入文件：** [`../../figures/q1/q1_history.pdf`](../../figures/q1/q1_history.pdf)。
 
 **图题：** 图 2 中心、内部位置与表面温度和含水率随时间的变化。
 
-**LaTeX 放置示意：** `\includegraphics[width=0.90\linewidth]{../../figures/q1/q1_history.pdf}`，图标签建议为 `fig:q1-history`。图中数据源为 [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
+**图中数据源：** [`../../results/q1/fields.npz`](../../results/q1/fields.npz)。
 
 **图后衔接句：** “图 2 显示，表面首先响应烘房环境变化，中心响应具有明显滞后；该滞后来自有限热扩散和非线性水分扩散，而非输出采样步长造成的假象。”
 
@@ -262,11 +256,11 @@ q(0)\approx\frac{9q_0-q_1}{8},
 
 **插入位置：** 放在算法验证段最后，紧接空间加密、时间容差和独立热基准的数值说明之后。图 3 的作用是支撑数值可靠性，不用于解释药材物理机制。
 
-**插入文件：** [`../../figures/q1/q1_convergence.pdf`](../../figures/q1/q1_convergence.pdf)。LaTeX 相对路径规则同图 1。
+**插入文件：** [`../../figures/q1/q1_convergence.pdf`](../../figures/q1/q1_convergence.pdf)。
 
 **图题：** 图 3 空间加密、时间容差与独立热基准的误差对照。
 
-**LaTeX 放置示意：** `\includegraphics[width=0.90\linewidth]{../../figures/q1/q1_convergence.pdf}`，图标签建议为 `fig:q1-convergence`。图中数据源为 [`../../results/q1/summary.json`](../../results/q1/summary.json)。
+**图中数据源：** [`../../results/q1/summary.json`](../../results/q1/summary.json)。
 
 **图后衔接句：** “图 3 中各组误差均随网格或积分设置收紧而降低，且有限体积温度解与独立特征展开基准保持一致，说明当前 Q1 数值结果已达到本研究设定的离散精度要求。”
 
