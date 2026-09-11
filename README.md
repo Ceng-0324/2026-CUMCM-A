@@ -25,7 +25,7 @@
 | Q1 预热阶段 | [Q1 方法概览](reports/q1/METHOD_OVERVIEW.md) | [Q1 正文稿](reports/q1/problem1_algorithm_analysis.md) | [Q1 结果报告](reports/q1/RESULTS_REPORT.md) | 条件模型已验证 |
 | Q2 变物性耦合 | [Q2 方法概览](reports/q2/METHOD_OVERVIEW.md) | [Q2 正文稿](reports/q2/problem2_algorithm_analysis.md) | [Q2 结果报告](reports/q2/RESULTS_REPORT.md) | 前 3 h 正式结果已验证 |
 | Q3 连续域达标事件 | [Q3 方法概览](reports/q3/METHOD_OVERVIEW.md) | [Q3 正文稿](reports/q3/problem3_algorithm_analysis.md) | [Q3 结果报告](reports/q3/RESULTS_REPORT.md) | 固定半径正式结果已验证 |
-| Q4 收缩与机制分解 | [Q4 方法概览](reports/q4/METHOD_OVERVIEW.md) | [Q4 总模型 Q4 小节](reports/ANALYSIS_MODELING_REPORT.md#7-q4材料坐标干基守恒与作用分解) | [Q4 结果报告](reports/q4/RESULTS_REPORT.md) | 正式结果、四组合机制与验证已完成 |
+| Q4 收缩与机制分解 | [Q4 方法概览](reports/q4/METHOD_OVERVIEW.md) | [Q4 正文算法稿](reports/q4/problem4_algorithm_analysis.md) | [Q4 结果报告](reports/q4/RESULTS_REPORT.md) | 正式结果、四组合机制与验证已完成 |
 
 ### 文件用途怎么区分
 
