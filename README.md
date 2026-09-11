@@ -10,6 +10,8 @@
 
 ## Quick Start：论文手先看什么
 
+需要先了解四问解法的共性与区别，阅读 [四问解法异同概览](reports/methods_comparison.md)，再进入对应问题的材料。
+
 不需要先通读整个仓库。按下面的顺序即可快速进入任一子问题：
 
 1. **先看方法概览**：打开 `reports/qX/METHOD_OVERVIEW.md`，确认本问的建模对象、核心算法、输出和验证状态。
@@ -32,6 +34,7 @@
 | 文件类型 | 论文手用法 | 不要混淆的内容 |
 |---|---|---|
 | `METHOD_OVERVIEW.md` | 快速知道“用了什么方法、解决什么难点、是否已验证” | 不是完整推导，也不是最终结果表 |
+| [`methods_comparison.md`](reports/methods_comparison.md) | 横向比较四问的模型、算法、输出与验证重点 | 是解法对照，不另行定义模型 |
 | `problemX_algorithm_analysis.md` | 获取正文段落、公式、算法步骤和图表插入说明 | 不新增总模型之外的事实 |
 | `RESULTS_REPORT.md` | 获取正式数值、验证指标和适用边界 | 不把原型试算当正式结果 |
 | `results/qX/` | 读取 CSV、Excel、NPZ、JSON 等可追溯数据 | 不直接从 PDF 图片反抄数值 |
