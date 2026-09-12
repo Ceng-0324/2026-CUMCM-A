@@ -20,6 +20,7 @@ from scipy.optimize import brentq
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
 from data_io import ROOT, read_xlsx, verify_inputs, write_json
 from model import solve_radial, reconstruct_profile, kirchhoff, inverse_kirchhoff
+from plotting import configure as configure_plotting
 
 THRESHOLD = 0.15
 DURATION_S = 72 * 3600.0
@@ -149,6 +150,7 @@ def physical_output(solution, times_s):
 
 def plot_figures(figures_dir, event, solution, convergence, mechanism):
     figures_dir.mkdir(parents=True, exist_ok=True)
+    configure_plotting(ROOT)
     plt.rcParams.update({"font.sans-serif": ["STHeiti", "PingFang SC", "Hiragino Sans GB", "DejaVu Sans"],
                          "axes.unicode_minus": False})
     fig, ax = plt.subplots(figsize=(7, 4))

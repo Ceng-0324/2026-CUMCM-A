@@ -191,7 +191,7 @@ Q1 采用 {GRIDS[-1]} 个均匀径向单元、BDF、rtol=10⁻¹⁰、atol=10⁻
 - [精度对照](../../figures/q1/q1_convergence.pdf)：时空输出网格加密误差与独立热基准误差，数据来自 summary.json。
 - [时空热力图](../../figures/q1/q1_spatiotemporal_heatmaps.pdf)：预热阶段温度与含水率的时间—半径分布，数据来自 fields.npz。
 
-图中使用中文坐标与图例，PDF 为矢量输出，图内不设置总标题。图件生成环境与文件哈希记录于 artifact_manifest.json。
+各图按内容使用中文或英文坐标与图例，PDF 为矢量输出，图内不设置总标题。热力图采用 11×11 取样方格，生成环境与文件哈希记录于 artifact_manifest.json。
 '''
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(report, encoding='utf-8')

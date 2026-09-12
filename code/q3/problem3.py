@@ -20,6 +20,7 @@ from scipy.optimize import brentq
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
 from data_io import ROOT, read_xlsx, verify_inputs, write_json
 from model import solve_radial
+from plotting import configure as configure_plotting
 
 
 THRESHOLD = 0.15
@@ -143,6 +144,7 @@ def table_times(event_time):
 
 def plot_figures(output_dir, figures_dir, result, formal_solution):
     figures_dir.mkdir(parents=True, exist_ok=True)
+    configure_plotting(ROOT)
     plt.rcParams.update({"font.sans-serif": ["STHeiti", "PingFang SC", "Hiragino Sans GB", "DejaVu Sans"],
                          "axes.unicode_minus": False})
     scan_t = result["scan_times_s"]

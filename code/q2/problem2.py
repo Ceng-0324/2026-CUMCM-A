@@ -19,6 +19,7 @@ import xlsxwriter
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
 from data_io import ROOT, read_xlsx, verify_inputs, write_json
 from model import kirchhoff, solve_radial
+from plotting import configure as configure_plotting
 
 DURATION_S = 10800
 TIMES_S = np.arange(1.0, DURATION_S + 1.0)
@@ -83,6 +84,7 @@ def verify_workbook(path, temperature_c, moisture):
 
 def plot_figures(output_dir, figures_dir):
     figures_dir.mkdir(parents=True, exist_ok=True)
+    configure_plotting(ROOT)
     data = np.load(output_dir / "fields.npz", allow_pickle=True)
     times, radii, tc, c = data["times_s"], data["radii_cm"], data["temperature_C"], data["moisture"]
     plt.rcParams.update({"font.sans-serif": ["STHeiti", "Arial Unicode MS", "DejaVu Sans"],
@@ -105,8 +107,10 @@ def plot_figures(output_dir, figures_dir):
     fig.tight_layout(); fig.savefig(figures_dir / "q2_history.pdf", format="pdf"); plt.close(fig)
     # 全烘干过程温度与含水率时空热力图
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
+    moisture_cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+        "blue_white_light_red", ["#2166ac", "#f7f7f7", "#EE0000"])
     for a, field, title, label, cmap in [(ax[0], tc, "全烘干温度时空分布", "温度/°C", "viridis"),
-                                          (ax[1], c, "全烘干含水率时空分布", "含水率/(kg/kg)", "RdBu_r")]:
+                                          (ax[1], c, "全烘干含水率时空分布", "含水率/(kg/kg)", moisture_cmap)]:
         mesh = a.pcolormesh(radii, times/3600, field, shading="auto", cmap=cmap, edgecolors="none", linewidth=0, antialiased=False, rasterized=True)
         a.set(xlabel="到中心距离/cm", ylabel="时间/h", title=title)
         fig.colorbar(mesh, ax=a, pad=0.02, label=label)
@@ -228,7 +232,6 @@ def run(output_dir, report_path, figures_dir):
             f.write("时间/h,0 cm,0.5 cm,1 cm,1.5 cm,2 cm\n")
             for t, row in zip(tables["times_h"], tables[key]):
                 f.write(str(t) + "," + ",".join(f"{x:.4f}" for x in row) + "\n")
-    write_json(output_dir / "summary.json", summary)
     summary["figures"] = plot_figures(output_dir, figures_dir)
     write_json(output_dir / "summary.json", summary)
     write_report(report_path, summary)

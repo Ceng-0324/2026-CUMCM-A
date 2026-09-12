@@ -18,8 +18,8 @@
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
       "code/common/model.py": "db98497e445b7f54e754bace42cc754317f53f0d66bbb067824dfca1912af1b7",
       "code/q1/q1_validation.py": "f94df10f227a8c520d9a46910127bf2c70cf6c008ec2947c344eede98ad56012",
-      "code/q1/problem1.py": "4d4347f31d0cb04faea1f26dab13c871703600a33fe96297ed7af783857e7713",
-      "code/q1/plot_q1.py": "76e31af94aa7eff93ca24162780f231c1a26fcd330e421c78f5619e517050955"
+      "code/q1/problem1.py": "4ed945b464ae5846a4083bb9416d864b6940150c4da99065fa6caf306e34798b",
+      "code/q1/plot_q1.py": "b0ae85524e1e19a9ebbddc798513b270aab6e470afdfe75eb85639055818275a"
     }
   },
   "configuration": {

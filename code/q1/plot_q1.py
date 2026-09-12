@@ -30,9 +30,12 @@ def plot(output_dir, figures_dir):
     # TTC/OTF may contain CFF outlines that cannot be embedded as TrueType.
     # Conservatively use vector Type 3 outlines for those font containers.
     pdf_fonttype = 42 if Path(font_manager.findfont(family)).suffix.lower() == '.ttf' else 3
-    plt.rcParams.update({'font.family': [family, 'DejaVu Sans'], 'font.size': 10, 'axes.unicode_minus': False,
+    plt.rcParams.update({'font.family': [family, 'DejaVu Sans'], 'font.size': 8, 'axes.unicode_minus': False,
                          'mathtext.fontset': 'dejavusans',
-                         'pdf.fonttype': pdf_fonttype, 'axes.spines.top': False, 'axes.spines.right': False})
+                         'pdf.fonttype': pdf_fonttype, 'axes.spines.top': False, 'axes.spines.right': False,
+                         'axes.linewidth': 0.6, 'xtick.direction': 'out', 'ytick.direction': 'out',
+                         'xtick.major.width': 0.6, 'ytick.major.width': 0.6,
+                         'xtick.major.size': 3, 'ytick.major.size': 3})
     figures_dir.mkdir(parents=True, exist_ok=True)
     fields = np.load(output_dir/'fields.npz')
     summary = json.loads((output_dir/'summary.json').read_text(encoding='utf-8'))
@@ -85,23 +88,45 @@ def plot(output_dir, figures_dir):
     axes[1].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
     save(fig, 'q1_convergence.pdf')
 
-    # 时空热力图：展示预热阶段全场演化，数据直接来自正式逐秒场。
-    time_min = fields['times_s'] / 60.0
-    # 正式逐秒场按工作簿的 21 个半径保存；profile_radii_m 是剖面图的加密轴。
-    radius_cm = fields['radii_m'] * 100.0
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), layout='constrained')
-    for ax, key, title, cbar_label in zip(
-        axes, ['temperature_C', 'moisture'],
-        ['药材温度时空分布', '药材含水率时空分布'],
-        ['温度 / °C', '干基含水率 / (kg/kg)']):
-        # 含水率采用蓝—白—红发散色带，突出相对初始状态的空间梯度。
-        cmap = 'RdBu_r' if key == 'moisture' else 'viridis'
-        mesh = ax.pcolormesh(radius_cm, time_min, fields[key], shading='auto', cmap=cmap,
-                             edgecolors='none', linewidth=0, antialiased=False, rasterized=True)
-        ax.set(xlabel='距中心半径 / cm', ylabel='时间 / min', title=title,
-               xlim=(0, 2), ylim=(0, 30))
-        cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
-        cbar.set_label(cbar_label)
+    # 时空热力图：按期刊矩阵热力图样式取样为 11×11 方格，数据仍来自正式场。
+    # 时间取 0、3、…、30 min；半径取 0、0.2、…、2.0 cm，首行使用题设初值。
+    sample_times_s = np.arange(0.0, 1800.1, 180.0)
+    sample_radius_idx = np.arange(0, 21, 2)
+    sample_time_idx = (sample_times_s[1:] - 1).astype(int)
+    matrices = {
+        'temperature_C': np.vstack([fields['initial_temperature_C'][sample_radius_idx],
+                                    fields['temperature_C'][sample_time_idx][:, sample_radius_idx]]),
+        'moisture': np.vstack([fields['initial_moisture'][sample_radius_idx],
+                               fields['moisture'][sample_time_idx][:, sample_radius_idx]]),
+    }
+    radius_labels = [f'{x:.1f}' for x in np.linspace(0, 2, 11)]
+    time_labels = [f'{x:g}' for x in np.arange(0, 31, 3)]
+    fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.2), layout='constrained')
+    for ax, key, panel, cbar_label, vmin, vmax in zip(
+        axes, ['temperature_C', 'moisture'], ['(a)', '(b)'],
+        ['温度 / °C', '干基含水率 / (kg/kg)'], [28.0, 1.5], [37.0, 2.55]):
+        cmap = ('viridis' if key == 'temperature_C' else
+                matplotlib.colors.LinearSegmentedColormap.from_list(
+                    'blue_white_deep_red',
+                    ['#2166ac', '#f7f7f7', '#f4a582', '#b2182b']))
+        im = ax.imshow(matrices[key], cmap=cmap, vmin=vmin, vmax=vmax,
+                       interpolation='nearest', aspect='equal', origin='upper')
+        # 与参考文档相同的白色方格边界；仅用于区分取样单元，不表示新网格。
+        ax.set_xticks(np.arange(-.5, 11, 1), minor=True)
+        ax.set_yticks(np.arange(-.5, 11, 1), minor=True)
+        ax.grid(which='minor', color='white', linewidth=0.8)
+        ax.tick_params(which='minor', length=0)
+        ax.set_xticks(np.arange(11), labels=radius_labels)
+        ax.set_yticks(np.arange(11), labels=time_labels)
+        ax.tick_params(labelsize=7, width=0.5, length=3)
+        ax.set_xlabel('距中心半径 / cm')
+        ax.set_ylabel('时间 / min')
+        ax.text(-0.10, 1.08, panel, transform=ax.transAxes,
+                fontsize=9, fontweight='bold', va='top')
+        cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+        cbar.set_label(cbar_label, fontsize=7)
+        cbar.ax.tick_params(labelsize=7, width=0.5, length=3)
+        cbar.outline.set_linewidth(0.5)
     save(fig, 'q1_spatiotemporal_heatmaps.pdf')
     return dict(matplotlib=matplotlib.__version__, font_family=family, pdf_fonttype=pdf_fonttype,
                 files=['q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf',

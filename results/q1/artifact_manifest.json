@@ -17,12 +17,12 @@
   "files": {
     "fields.npz": "6295e749ff0e8f3501478c0819f79cda8e7dfec6be2d5bfd4e2b260e7d19eff2",
     "result1.xlsx": "8216bc8f0d8c28de34f5a7edb72038554201d49cbd26380dea079455f5a077c7",
-    "summary.json": "8fe48b52af761fc9d430bc4815c9799fac809f2aaaff43a02cfa126e0863734d",
+    "summary.json": "94961d821df6a9e3f6930f4128375ebef5715847a43b843ad7f93398bab531b1",
     "table1.csv": "5920865da8f1f6897524e39c6b159057e7d9249439f488f3cac415f57503d315",
     "table2.csv": "1a2aee3826372b4a81e7d507a7bf3dbe0833116e11da94ff03568d5e83159bff",
     "q1_convergence.pdf": "06a31ad9dee4bc2336d48b10e7c2c5f8a87dbc2d5a89b0f8a05e7390ec7876ed",
     "q1_history.pdf": "728792a88eaf9d98ead71a09c4c7714f9000ca3064b7c60a3f8aa07cf7e31073",
     "q1_profiles.pdf": "da1d5f716e447a246d373e80ff4b96cbcf38316c14c8e88963fc07974ae097b7",
-    "q1_spatiotemporal_heatmaps.pdf": "1c51c3bb6b7c80cbc26ca65b73cf2c7a89b2395bed0bc29e61728c045fe7b187"
+    "q1_spatiotemporal_heatmaps.pdf": "b949ecdf22f65788a09ba35839acb023613836e268530ce26b87333575644552"
   }
 }
