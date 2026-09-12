@@ -17,7 +17,7 @@
     "code_sha256": {
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
       "code/common/model.py": "db98497e445b7f54e754bace42cc754317f53f0d66bbb067824dfca1912af1b7",
-      "code/q2/problem2.py": "b0eee71636911bb3032ce13b189e187c4e126b53a98d3072b44cbfd7dcc08e27"
+      "code/q2/problem2.py": "34a6cc8bf243aa315cb5738cf66a9a6dbde4a5919ed2c9e9c4a69803ebe8aac0"
     }
   },
   "configuration": {
@@ -159,6 +159,7 @@
   "figures": [
     "q2_convergence.pdf",
     "q2_history.pdf",
-    "q2_profiles.pdf"
+    "q2_profiles.pdf",
+    "q2_spatiotemporal_heatmaps.pdf"
   ]
 }

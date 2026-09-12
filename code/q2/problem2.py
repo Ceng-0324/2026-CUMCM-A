@@ -103,6 +103,14 @@ def plot_figures(output_dir, figures_dir):
     ax[1].set(xlabel="时间/h", ylabel="含水率/(kg/kg)")
     for a in ax: a.grid(alpha=.25); a.legend(frameon=False)
     fig.tight_layout(); fig.savefig(figures_dir / "q2_history.pdf", format="pdf"); plt.close(fig)
+    # 全烘干过程温度与含水率时空热力图
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
+    for a, field, title, label, cmap in [(ax[0], tc, "全烘干温度时空分布", "温度/°C", "viridis"),
+                                          (ax[1], c, "全烘干含水率时空分布", "含水率/(kg/kg)", "RdBu_r")]:
+        mesh = a.pcolormesh(radii, times/3600, field, shading="auto", cmap=cmap, edgecolors="none", linewidth=0, antialiased=False, rasterized=True)
+        a.set(xlabel="到中心距离/cm", ylabel="时间/h", title=title)
+        fig.colorbar(mesh, ax=a, pad=0.02, label=label)
+    fig.savefig(figures_dir / "q2_spatiotemporal_heatmaps.pdf", format="pdf", bbox_inches="tight"); plt.close(fig)
     conv = data["convergence"].item()
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.semilogy(conv["times_h"], conv["moisture_difference"], label="1024→2048 含水率差")
