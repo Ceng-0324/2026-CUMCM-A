@@ -154,6 +154,13 @@ def plot_figures(output_dir, figures_dir, result, formal_solution):
     ax.axvline(event / 3600.0, color="#444", ls=":", label=f"达标时刻 {event/3600:.4f} h")
     ax.set(xlabel="时间/h", ylabel="最大含水率/(kg/kg)")
     ax.grid(alpha=.25); ax.legend(frameon=False)
+    # 阈值事件局部放大，突出首次达标时刻的根定位。
+    inset = ax.inset_axes([0.52, 0.18, 0.43, 0.38])
+    mask = (scan_t >= event - 12*3600) & (scan_t <= event + 6*3600)
+    inset.plot(scan_t[mask]/3600.0, scan_c[mask], color="#1f5a94")
+    inset.axhline(THRESHOLD, color="#b33", ls="--")
+    inset.axvline(event/3600.0, color="#444", ls=":")
+    inset.set_title("事件附近", fontsize=8); inset.tick_params(labelsize=7)
     fig.tight_layout(); fig.savefig(figures_dir / "q3_threshold_event.pdf", format="pdf"); plt.close(fig)
 
     times = np.array([max(0.0, event - 6 * 3600), event])

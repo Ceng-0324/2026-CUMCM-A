@@ -256,6 +256,10 @@ f(0)\approx\frac{9f_1-f_2}{8},
 
 0.5 h 时，表面含水率已降至 $1.6486\,\mathrm{kg/kg}$，中心仍接近初始值。令 $\Delta C(t)=C(0,t)-C_s(t)$，由未舍入结果得到，0.5 h 和 3 h 的 $\Delta C$ 分别为 $0.9013$ 和 $0.7581\,\mathrm{kg/kg}$。3 h 时，21 个输出半径中的最大含水率为 $1.7662\,\mathrm{kg/kg}$，位于中心，表面含水率为 $1.0081\,\mathrm{kg/kg}$。结合表 3，热场已接近均匀时，水分场仍存在明显的中心滞后；这一空间差异使后续干燥时长需要结合全域含水率判断。
 
+为同时呈现整个 3 h 预热—干燥过程中的空间梯度，在本段末插入温度与含水率时空热力图。图中横轴为到中心距离，纵轴为时间；左图对应温度场，右图对应含水率场。该图用于补充剖面图和时间历史图，直观显示表面先响应、中心滞后以及含水率梯度的持续演化。
+
+> 此处插入图 3：全烘干过程温度与含水率时空分布。图件：[../../figures/q2/q2_spatiotemporal_heatmaps.pdf](../../figures/q2/q2_spatiotemporal_heatmaps.pdf)，数据来自 [../../results/q2/fields.npz](../../results/q2/fields.npz)。
+
 ### 5.3 剖面与时间演化
 
 为展示典型位置之间的空间变化，选取 0.5、1.5 和 3 h 的径向剖面，如图 1 所示。
@@ -282,9 +286,9 @@ j_R(3\,\mathrm h)=7.66687\times10^{-7}\,\mathrm{m/s}.
 
 以 $N=1024$ 为正式网格，采用 $N=512,2048$ 进行空间复核；同时将时间设置收紧至 $\mathrm{rtol}=5\times10^{-9}$、$\mathrm{atol}=5\times10^{-11}$、最大步长 $15\,\mathrm s$，比较六个表格时刻、21 个输出半径上的场值。
 
-从 $N=1024$ 加密至 $2048$ 后，最大温度差为 $1.16294\times10^{-6}\,\mathrm K$，最大含水率差为 $4.24291\times10^{-7}\,\mathrm{kg/kg}$；收紧时间设置后，两类最大差异分别为 $5.91154\times10^{-4}\,\mathrm K$ 和 $1.42873\times10^{-5}\,\mathrm{kg/kg}$。在所检查的时空点上，时间设置变化引起的场差异大于本次空间加密差异。各表格时刻的空间加密差异见图 3。
+从 $N=1024$ 加密至 $2048$ 后，最大温度差为 $1.16294\times10^{-6}\,\mathrm K$，最大含水率差为 $4.24291\times10^{-7}\,\mathrm{kg/kg}$；收紧时间设置后，两类最大差异分别为 $5.91154\times10^{-4}\,\mathrm K$ 和 $1.42873\times10^{-5}\,\mathrm{kg/kg}$。在所检查的时空点上，时间设置变化引起的场差异大于本次空间加密差异。各表格时刻的空间加密差异见图 4。
 
-> 此处插入图 3：空间加密下温度与含水率场差异。图件：[../../figures/q2/q2_convergence.pdf](../../figures/q2/q2_convergence.pdf)。数据见 [../../results/q2/fields.npz](../../results/q2/fields.npz)，检验汇总见 [../../results/q2/summary.json](../../results/q2/summary.json)。
+> 此处插入图 4：空间加密下温度与含水率场差异。图件：[../../figures/q2/q2_convergence.pdf](../../figures/q2/q2_convergence.pdf)。数据见 [../../results/q2/fields.npz](../../results/q2/fields.npz)，检验汇总见 [../../results/q2/summary.json](../../results/q2/summary.json)。
 
 离散水量收支通过控制体加权含水量与累计表面损失核验。定义
 

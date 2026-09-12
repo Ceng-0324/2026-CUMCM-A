@@ -147,7 +147,7 @@ def physical_output(solution, times_s):
     return field.moisture, surface
 
 
-def plot_figures(figures_dir, event, solution, convergence):
+def plot_figures(figures_dir, event, solution, convergence, mechanism):
     figures_dir.mkdir(parents=True, exist_ok=True)
     plt.rcParams.update({"font.sans-serif": ["STHeiti", "PingFang SC", "Hiragino Sans GB", "DejaVu Sans"],
                          "axes.unicode_minus": False})
@@ -167,6 +167,42 @@ def plot_figures(figures_dir, event, solution, convergence):
     ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值")
     ax.set(xlabel="实际到中心距离/cm", ylabel="含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(figures_dir / "q4_shrink_profiles.pdf", format="pdf"); plt.close(fig)
+
+    # 单面板机制路径图：以基准到正式组合的路径展示各效应贡献。
+    effects = mechanism["effects"]
+    base = effects["baseline_fixed_appendix3_h"]
+    g = effects["geometry_effect_at_appendix3_h"]
+    p_eff = effects["property_effect_at_fixed_geometry_h"]
+    inter = effects["interaction_effect_h"]
+    net = effects["net_change_h"]
+    xs = np.arange(5)
+    ys = np.array([base, base + g, base + g + p_eff, base + g + p_eff + inter, base + net])
+    labels = ["固定域·附录3\n基准", "加入收缩\n几何效应", "再加入附录4\n物性", "加入交互\n效应", "正式组合\n收缩域·附录4"]
+    fig, ax = plt.subplots(figsize=(10.5, 4.6), constrained_layout=True)
+    ax.plot(xs, ys, color="#2F4B7C", lw=2.2, zorder=2)
+    ax.scatter(xs, ys, s=[95, 75, 75, 75, 110], c=["#4C78A8", "#2E8B57", "#C44E52", "#7A5195", "#E45756"], edgecolor="white", linewidth=1.2, zorder=3)
+    for i in range(4):
+        delta = ys[i+1] - ys[i]
+        if abs(delta) < 1e-8:
+            continue
+        color = "#2E8B57" if delta < 0 else "#C44E52"
+        ax.annotate(f"{delta:+.2f}", xy=((xs[i]+xs[i+1])/2, (ys[i]+ys[i+1])/2),
+                    xytext=(0, 17 if delta >= 0 else -20), textcoords="offset points",
+                    ha="center", color=color, fontsize=9, fontweight="bold",
+                    arrowprops=dict(arrowstyle="-|>", color=color, lw=1.0,
+                                    connectionstyle="arc3,rad=0.08"))
+    for x, y in zip(xs, ys):
+        # 低位节点标签上移，避免与横坐标组合名称重叠。
+        place_above = (x in [0, 4]) or (y < 35)
+        offset = 5 if place_above else -5
+        ax.text(x, y + offset, f"{y:.2f}", ha="center",
+                va="bottom" if place_above else "top", fontsize=8, color="#222")
+    ax.set_xticks(xs, labels)
+    ax.set_ylabel("连续达标时刻 / h")
+    ax.set_title("Q4 从基准到正式组合的机制路径")
+    ax.grid(axis="y", alpha=.2); ax.set_xlim(-0.35, 4.35)
+    ax.text(0.02, 0.04, "绿色：缩短达标时间    红色：延长达标时间", transform=ax.transAxes, fontsize=8, color="#555")
+    fig.savefig(figures_dir / "q4_mechanism_comparison.pdf", format="pdf", bbox_inches="tight"); plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.plot(convergence["grid"], convergence["event_time_h"], "o-", label="连续事件时刻")
@@ -244,6 +280,7 @@ t_*={e['event_time_h']:.8f}\,\mathrm{{h}}={e['event_time_s']:.3f}\,\mathrm{{s}}.
 - 图 1 连续域最大含水率与阈值事件：[`../../figures/q4/q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf)。
 - 图 2 收缩过程中事件前后实际半径剖面：[`../../figures/q4/q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf)。
 - 图 3 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
+- 图 4 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
 
 ## 数值验证与边界
 
@@ -311,6 +348,7 @@ def run(output_dir, report_path, figures_dir):
     balance = 2 * formal.model.weights @ states[n:2*n] + states[-1] - 2.55
     profile_refine = abs(event["event_max_moisture"] - float(np.max(formal.sample(
         [event["event_time_s"]], np.linspace(0, 1, 2049), coordinate="material").moisture)))
+    mechanism = mechanism_runs()
     summary = {"scope": "Q4 shrinking radius appendix 4 continuous-domain event",
                "provenance": provenance(),
                "configuration": {"n": FORMAL_GRID, "appendix": 4, "shrink": True, "duration_s": DURATION_S,
@@ -326,7 +364,7 @@ def run(output_dir, report_path, figures_dir):
                "table6": {"times_h": (table_t / 3600).tolist(),
                           "moisture": [[float(x) if np.isfinite(x) else None for x in row]
                                        for row in np.column_stack([table_field.moisture, table_surface])]},
-               "mechanism": mechanism_runs(),
+               "mechanism": mechanism,
                "workbook": verify_workbook(output_dir / "result4.xlsx", times, moisture, surface)}
     np.savez_compressed(output_dir / "fields.npz", times_s=times, radii_cm=RADII_CM, moisture=moisture,
                         surface_moisture=surface, event_scan_times_s=event["scan_times_s"],
@@ -334,7 +372,8 @@ def run(output_dir, report_path, figures_dir):
                         event_profile_moisture=event["event_profile_moisture"], convergence_grid=np.array(GRID_RUNS),
                         convergence_event_time_h=np.array(summary["validation"]["event_time_h"]))
     summary["figures"] = plot_figures(figures_dir, event, formal,
-                                       {"grid": list(GRID_RUNS), "event_time_h": summary["validation"]["event_time_h"]})
+                                       {"grid": list(GRID_RUNS), "event_time_h": summary["validation"]["event_time_h"]},
+                                       mechanism)
     write_json(output_dir / "summary.json", summary); write_report(report_path, summary)
     artifacts = [output_dir / x for x in ("result4.xlsx", "fields.npz", "summary.json", "table6.csv")]
     artifacts += sorted(figures_dir.glob("q4_*.pdf"))

@@ -231,6 +231,8 @@ j_{i+1/2}=-A(T_{i+1/2})
 | 正式结果报告 | [`RESULTS_REPORT.md`](RESULTS_REPORT.md) |
 | 工作簿与未舍入场 | [`../../results/q3/result3.xlsx`](../../results/q3/result3.xlsx)、[`../../results/q3/fields.npz`](../../results/q3/fields.npz) |
 | 表 5 数据与验证摘要 | [`../../results/q3/table5.csv`](../../results/q3/table5.csv)、[`../../results/q3/summary.json`](../../results/q3/summary.json) |
-| 论文数据图 | [`../../figures/q3/q3_threshold_event.pdf`](../../figures/q3/q3_threshold_event.pdf)、[`../../figures/q3/q3_threshold_profiles.pdf`](../../figures/q3/q3_threshold_profiles.pdf)、[`../../figures/q3/q3_convergence.pdf`](../../figures/q3/q3_convergence.pdf) |
+| 论文数据图 | [`../../figures/q3/q3_threshold_event.pdf`](../../figures/q3/q3_threshold_event.pdf)（含事件局部放大）、[`../../figures/q3/q3_threshold_profiles.pdf`](../../figures/q3/q3_threshold_profiles.pdf)、[`../../figures/q3/q3_convergence.pdf`](../../figures/q3/q3_convergence.pdf) |
 
 论文正文保留模型定义、事件求解、表 5、图件解释和验证边界；脚本路径、工作簿回读和产物哈希属于交接索引，不应直接写入正文段落。
+
+- 新增阈值事件局部放大图（嵌入 `q3_threshold_event.pdf` 右下角）：用于正文说明首次达标时刻的根定位。
