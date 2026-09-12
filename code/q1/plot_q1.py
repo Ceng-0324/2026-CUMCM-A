@@ -94,7 +94,10 @@ def plot(output_dir, figures_dir):
         axes, ['temperature_C', 'moisture'],
         ['药材温度时空分布', '药材含水率时空分布'],
         ['温度 / °C', '干基含水率 / (kg/kg)']):
-        mesh = ax.pcolormesh(radius_cm, time_min, fields[key], shading='auto', cmap='viridis')
+        # 含水率采用蓝—白—红发散色带，突出相对初始状态的空间梯度。
+        cmap = 'RdBu_r' if key == 'moisture' else 'viridis'
+        mesh = ax.pcolormesh(radius_cm, time_min, fields[key], shading='auto', cmap=cmap,
+                             edgecolors='none', linewidth=0, antialiased=False, rasterized=True)
         ax.set(xlabel='距中心半径 / cm', ylabel='时间 / min', title=title,
                xlim=(0, 2), ylim=(0, 30))
         cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
