@@ -5,6 +5,8 @@
 | [`ANALYSIS_MODELING_REPORT.md`](ANALYSIS_MODELING_REPORT.md) | A 题唯一模型与假设事实源 | 持续维护 |
 | [`methods_comparison.md`](methods_comparison.md) | 四问解法的共同框架、模型与算法差异、递进关系 | 论文手横向对照入口 |
 | [`symbols_parameters.md`](symbols_parameters.md) | 四问统一符号、物理参数、经验物性和数值设置总表 | 论文手公式与参数查阅入口 |
+| [`model_validation_methods.md`](model_validation_methods.md) | 四问模型检验方法、数值证据与结果可信性边界 | 已完成 |
+| [`model_evaluation.md`](model_evaluation.md) | 按国赛优秀论文要求整理模型优点、可靠性、敏感性、局限与推广正文素材 | 已完成 |
 | [`references_by_question.md`](references_by_question.md) | 按 Q1–Q4 分类的近十年论文、中文优先入口、引用网址与期刊索引依据 | 17 篇（中文 4 篇）；10 篇优先、7 篇补充，另列 2 篇待核验候选 |
 | [`论文问题分析.md`](论文问题分析.md) | 论文手使用的问题分析素材 | 四问问题分析可交接 |
 | [`uniqueness_enhancement.md`](uniqueness_enhancement.md) | A题四问正文独特性提升与证据边界 | 持续维护 |

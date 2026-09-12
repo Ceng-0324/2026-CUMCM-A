@@ -30,7 +30,7 @@ Q1–Q4 的正式结果工作簿、数值验证、数据图和方法正文稿已
 - 数据组稿：[论文数据包](reports/PAPER_DATA_PACKAGE.md)；技术路线、递进关系和方法图的插入建议：[图示报告](reports/DRAWIO_REPORT.md)。
 - 参考文献：[四问引用文献指南](reports/references_by_question.md)，按问题查找中文优先文献、引用位置及期刊索引依据。
 - 论文工程：[LaTeX 组稿入口](paper/README.md)，正文、图件插入和参考文献初稿集中在 `paper/`。
-- 模型评价：结合模型总文档的假设与各问结果报告的验证边界撰写。
+- 模型评价：[模型评价与推广](reports/model_evaluation.md)，按国赛优秀论文要求汇总优点、数值可靠性、敏感性、局限与推广。
 
 ## 目录
 
