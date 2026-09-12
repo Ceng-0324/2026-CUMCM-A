@@ -84,6 +84,23 @@ def plot(output_dir, figures_dir):
     axes[1].set(xlabel='时间 / min', ylabel='与独立热基准的最大偏差 / K', xlim=(0, 30))
     axes[1].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
     save(fig, 'q1_convergence.pdf')
+
+    # 时空热力图：展示预热阶段全场演化，数据直接来自正式逐秒场。
+    time_min = fields['times_s'] / 60.0
+    # 正式逐秒场按工作簿的 21 个半径保存；profile_radii_m 是剖面图的加密轴。
+    radius_cm = fields['radii_m'] * 100.0
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), layout='constrained')
+    for ax, key, title, cbar_label in zip(
+        axes, ['temperature_C', 'moisture'],
+        ['药材温度时空分布', '药材含水率时空分布'],
+        ['温度 / °C', '干基含水率 / (kg/kg)']):
+        mesh = ax.pcolormesh(radius_cm, time_min, fields[key], shading='auto', cmap='viridis')
+        ax.set(xlabel='距中心半径 / cm', ylabel='时间 / min', title=title,
+               xlim=(0, 2), ylim=(0, 30))
+        cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
+        cbar.set_label(cbar_label)
+    save(fig, 'q1_spatiotemporal_heatmaps.pdf')
     return dict(matplotlib=matplotlib.__version__, font_family=family, pdf_fonttype=pdf_fonttype,
-                files=['q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf'],
+                files=['q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf',
+                       'q1_spatiotemporal_heatmaps.pdf'],
                 data_sources=['fields.npz', 'summary.json'])

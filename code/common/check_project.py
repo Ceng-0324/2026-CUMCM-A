@@ -124,7 +124,8 @@ def check_q1():
                 f'Q1 代码已变化：{path}；审查后运行 make q1')
     manifest = read(directory/'artifact_manifest.json')
     outputs = {'result1.xlsx', 'fields.npz', 'summary.json', 'table1.csv', 'table2.csv'}
-    figures = {'q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf'}
+    figures = {'q1_profiles.pdf', 'q1_history.pdf', 'q1_convergence.pdf',
+               'q1_spatiotemporal_heatmaps.pdf'}
     require(set(manifest['files']) == outputs | figures, 'Q1 产物清单缺失或包含未声明文件')
     for name, digest in manifest['files'].items():
         path = ROOT/'figures/q1'/name if name in figures else directory/name
