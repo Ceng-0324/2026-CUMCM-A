@@ -1,0 +1,11 @@
+\vspace{1.1em}
+核心复现入口为项目中的 \texttt{code/q1/}--\texttt{code/q4/} 脚本，完整代码量较大，正文仅保留算法伪代码：
+\begin{lstlisting}
+读取附件并审计单位、时间轴与输入哈希
+for question in Q1, Q2, Q3, Q4:
+    设置物性、半径轨迹与边界条件
+    建立环形有限体积通量和 Robin 半控制体
+    使用自适应 BDF 推进温度/含水率状态
+    重构连续场并输出表格、图件和验证数据
+Q3/Q4: 扫描最大含水率并用 Brent 定位首次达标事件
+\end{lstlisting}
