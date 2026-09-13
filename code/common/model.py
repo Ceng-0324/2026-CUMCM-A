@@ -217,7 +217,9 @@ class RadialSolution:
 
 def solve_radial(n, *, appendix=3, shrink=False, boundary='mean', duration_s=1800.,
                  rtol=2e-6, atol=None, max_step=600., align_environment=False,
-                 stop_at_cell_threshold=False):
+                 stop_at_cell_threshold=False, method='BDF'):
+    if method not in ('BDF', 'Radau'):
+        raise ValueError('时间积分方法必须为 BDF 或 Radau')
     if any(not np.isfinite(x) or x <= 0 for x in [duration_s, rtol, max_step]):
         raise ValueError('容差、步长及积分时长必须为有限正数')
     if atol is not None and (np.any(~np.isfinite(atol)) or np.any(np.asarray(atol) <= 0)):
@@ -236,7 +238,7 @@ def solve_radial(n, *, appendix=3, shrink=False, boundary='mean', duration_s=180
         stops = np.unique(np.r_[0., knots[(knots > 0) & (knots < duration_s)], duration_s])
     segments = []
     for left, right in zip(stops, stops[1:]):
-        sol = solve_ivp(model.rhs, (left, right), initial, method='BDF', rtol=rtol,
+        sol = solve_ivp(model.rhs, (left, right), initial, method=method, rtol=rtol,
                         atol=rtol*.01 if atol is None else atol,
                         events=threshold if stop_at_cell_threshold else None,
                         max_step=max_step, dense_output=True, jac_sparsity=sparsity(n))
@@ -249,7 +251,7 @@ def solve_radial(n, *, appendix=3, shrink=False, boundary='mean', duration_s=180
     config = dict(n=n, appendix=appendix, shrink=shrink, boundary=boundary,
                   duration_s=duration_s, rtol=rtol, atol=atol, max_step=max_step,
                   align_environment=align_environment,
-                  stop_at_cell_threshold=stop_at_cell_threshold)
+                  stop_at_cell_threshold=stop_at_cell_threshold, method=method)
     return RadialSolution(model, segments, config)
 
 

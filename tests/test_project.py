@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'code/common'))
 from audit import audit_inputs
 from data_io import verify_inputs
-from model import analytic_radial_check, divergence, kirchhoff, material_parameters, probe_a, radial_geometry
+from model import analytic_radial_check, divergence, kirchhoff, material_parameters, probe_a, radial_geometry, solve_radial
 
 
 class InputTests(unittest.TestCase):
@@ -102,6 +102,8 @@ class NumericalTests(unittest.TestCase):
                 probe_a(**kwargs)
         with self.assertRaises(ValueError):
             material_parameters(1., 300., 1)
+        with self.assertRaisesRegex(ValueError, '时间积分方法'):
+            solve_radial(8, duration_s=1, method='CrankNicolson')
 
 
 if __name__ == '__main__':

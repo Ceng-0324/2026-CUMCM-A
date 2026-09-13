@@ -74,3 +74,4 @@ t_*=51.09216535\,\mathrm{h}=183931.795\,\mathrm{s}.
 - [`../../results/q4/summary.json`](../../results/q4/summary.json)：参数、来源和验证记录。
 
 运行 `make q4` 可复现本结果；原始模板不会被覆盖。
+- [`../../results/q4/validation_sensitivity.json`](../../results/q4/validation_sensitivity.json)：物理参数敏感性与 BDF/Radau 独立积分器复核。

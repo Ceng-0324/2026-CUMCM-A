@@ -8,3 +8,4 @@
 - `check_project.py`：文档链接、来源哈希、历史回归和 Q1 产物核验。
 
 从项目根目录使用 `make check`、`make probe`、`make verify`，不要直接把公共模块复制到问题目录。
+- `model_validation_sensitivity.py`：Q3/Q4 物理参数敏感性和 BDF/Radau 独立积分器复核（输出到 `results/local/`）。

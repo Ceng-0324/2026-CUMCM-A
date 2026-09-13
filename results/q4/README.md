@@ -8,6 +8,7 @@ Q4 收缩与机制对照正式结果已生成。
 - `summary.json`：参数、四组合机制和验证记录。
 - `interpolation_sensitivity.json`：分段线性与 PCHIP 半径插值对照。
 - `formal_sensitivity.json`：四组合网格收敛及 Q3/Q4 环境延拓敏感性。
+- `validation_sensitivity.json`：\(h\)、\(k_m\)、扩散率前因子扰动及 BDF/Radau 独立积分器复核。
 - `artifact_manifest.json`：结果与图件 SHA-256 清单。
 
 对应报告见 [`reports/q4/RESULTS_REPORT.md`](../../reports/q4/RESULTS_REPORT.md)。
