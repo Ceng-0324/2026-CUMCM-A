@@ -1,0 +1,47 @@
+{
+  "cases": [
+    {
+      "n": 256,
+      "linear": {
+        "interpolator": "linear",
+        "n": 256,
+        "event_time_h": 51.092352523220214,
+        "event_time_s": 183932.46908359276
+      },
+      "pchip": {
+        "interpolator": "pchip",
+        "n": 256,
+        "event_time_h": 51.08881272965267,
+        "event_time_s": 183919.72582674964
+      },
+      "delta_s_pchip_minus_linear": -12.743256843124982
+    },
+    {
+      "n": 512,
+      "linear": {
+        "interpolator": "linear",
+        "n": 512,
+        "event_time_h": 51.092203024691976,
+        "event_time_s": 183931.9308888911
+      },
+      "pchip": {
+        "interpolator": "pchip",
+        "n": 512,
+        "event_time_h": 51.08866211422786,
+        "event_time_s": 183919.1836112203
+      },
+      "delta_s_pchip_minus_linear": -12.74727767080185
+    }
+  ],
+  "provenance": {
+    "input_sha256": {
+      "problemA/problemA.pdf": "052d8014bff5727c019b72e44fdffaf5c145ce04050dd938baaf3527db331736",
+      "problemA/附件/附件1.xlsx": "7ef32870abeef420b89560b2530ff60dfe4255917805151d89988d0311af9dd7",
+      "problemA/附件/附件2.xlsx": "5563acbfa4b4afb10cc6c03e2207e5369bf39da27576672aff14cc5c32e704af",
+      "problemA/附件/附件3/result1.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result2.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result3.xlsx": "07e4793d620a7f899804c0298d49a16a197960440fd47f8bb780c57ec27e2859",
+      "problemA/附件/附件3/result4.xlsx": "86e9300ffa3d30c43de895ea6723da943e85b8740b137bcae5af7107f076eeac"
+    }
+  }
+}

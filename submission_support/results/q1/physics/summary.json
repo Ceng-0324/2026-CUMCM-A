@@ -1,0 +1,245 @@
+{
+  "scope": "Q1 physical assumption audit; scenarios, not identified replacement answers",
+  "assumptions": {
+    "pressure_Pa": 101325.0,
+    "vapor_gas_constant": 461.52,
+    "dry_air_gas_constant": 287.055,
+    "dry_skeleton_density": 230.98591549295776,
+    "density_interpretation": "820 is initial wet bulk density",
+    "latent_heat_J_kg": 2400000.0,
+    "latent_heat_status": "assumed constant scale, not given by problem",
+    "gas_transfer_coefficient_m_s": 8e-07,
+    "activity_scenarios": [
+      1.0,
+      0.8
+    ],
+    "lewis_coefficient": "H / [rho_da * (1006 + 1860 W)]; assumes Lewis number one, not given",
+    "activity_status": "fixed hypothetical activities, not measured or fitted"
+  },
+  "room_audit": {
+    "relative_humidity_min": 0.594635656620863,
+    "relative_humidity_max": 0.8196797177707544,
+    "relative_humidity_initial": 0.8196797177707544,
+    "relative_humidity_1800": 0.6394368757928611,
+    "dewpoint_1800_C": 33.28566933377954
+  },
+  "baseline_difference": {
+    "surface_T_K": 1.2191133009764599e-06,
+    "surface_C": 0.0002618712991027117
+  },
+  "cases": {
+    "baseline": {
+      "mode": "baseline",
+      "activity": 1.0,
+      "coefficient": "given",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 33.57534473312387,
+        "surface_T_C": 36.78556017664147,
+        "center_C": 2.5499923989642217,
+        "surface_C": 1.5102360332075644,
+        "mean_C": 2.2935562586415457,
+        "mean_T_C": 35.16791473573522,
+        "mass_lost_g": 18.60919027061568,
+        "sensible_J": 4800.980076303299,
+        "convection_J": 4800.980076387581,
+        "latent_J": 0.0
+      },
+      "checks": {
+        "mass_balance_abs_kg": 1.3523904218715188e-13,
+        "energy_balance_abs_J": 8.428196451859549e-08,
+        "energy_relative_residual": 1.7555158150544143e-11,
+        "min_accepted_T_C": 28.0,
+        "min_accepted_C": 1.5102360332075644,
+        "evaporating_samples_below_dewpoint": 0
+      },
+      "refinement": {
+        "max_T_change_K": 3.6807388710258238e-06,
+        "max_C_change": 0.0008051321315969417,
+        "time_T_change_K": 2.2840822566649877e-09,
+        "time_C_change": 3.3107387942266087e-09
+      }
+    },
+    "direct_latent": {
+      "mode": "direct_latent",
+      "activity": 1.0,
+      "coefficient": "given",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 11.016537021485817,
+        "surface_T_C": 12.410400836761482,
+        "center_C": 2.5499923989642213,
+        "surface_C": 1.5102360332075506,
+        "mean_C": 2.2935562586415412,
+        "mean_T_C": 11.60647238798191,
+        "mass_lost_g": 18.609190270616004,
+        "sensible_J": -10980.180756510346,
+        "convection_J": 33681.875893963406,
+        "latent_J": 44662.05664942069
+      },
+      "checks": {
+        "mass_balance_abs_kg": 1.5095563687950175e-14,
+        "energy_balance_abs_J": 1.0530638974159956e-06,
+        "energy_relative_residual": 2.3578490925353634e-11,
+        "min_accepted_T_C": 9.611915915114992,
+        "min_accepted_C": 1.5102360332075506,
+        "evaporating_samples_below_dewpoint": 32
+      },
+      "refinement": {
+        "max_T_change_K": 0.0004696209243775229,
+        "max_C_change": 0.0008051341988775107,
+        "time_T_change_K": 8.789407957010553e-08,
+        "time_C_change": 2.093635931288418e-09
+      }
+    },
+    "gas_aw1": {
+      "mode": "gas_latent",
+      "activity": 1.0,
+      "coefficient": "given",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 33.57509443450829,
+        "surface_T_C": 36.785182914101256,
+        "center_C": 2.5499999999336542,
+        "surface_C": 2.5499863821234108,
+        "mean_C": 2.5499971123088407,
+        "mean_T_C": 35.16760342815763,
+        "mass_lost_g": 0.00020954925215744074,
+        "sensible_J": 4800.771566362443,
+        "convection_J": 4801.274484696844,
+        "latent_J": 0.5029182051433747
+      },
+      "checks": {
+        "mass_balance_abs_kg": 2.4516786323124486e-17,
+        "energy_balance_abs_J": 1.2925829651067033e-07,
+        "energy_relative_residual": 2.6921663596334003e-11,
+        "min_accepted_T_C": 27.99999896310186,
+        "min_accepted_C": 2.5499863821234108,
+        "evaporating_samples_below_dewpoint": 0
+      },
+      "refinement": {
+        "max_T_change_K": 3.6805981267207244e-06,
+        "max_C_change": 6.940803043420374e-09,
+        "time_T_change_K": 7.26430471331696e-08,
+        "time_C_change": 9.560441327494118e-11
+      }
+    },
+    "gas_aw08": {
+      "mode": "gas_latent",
+      "activity": 0.8,
+      "coefficient": "given",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 33.57547242304287,
+        "surface_T_C": 36.785677606943466,
+        "center_C": 2.5500000000181196,
+        "surface_C": 2.550004857092657,
+        "mean_C": 2.550001321426819,
+        "mean_T_C": 35.16803995844168,
+        "mass_lost_g": -9.589114156058311e-05,
+        "sensible_J": 4801.063948913531,
+        "convection_J": 4800.8338103009755,
+        "latent_J": -0.23013873976387364
+      },
+      "checks": {
+        "mass_balance_abs_kg": 6.4966632961016785e-18,
+        "energy_balance_abs_J": 1.2720829545287415e-07,
+        "energy_relative_residual": 2.649712539099519e-11,
+        "min_accepted_T_C": 28.0,
+        "min_accepted_C": 2.55,
+        "evaporating_samples_below_dewpoint": 0
+      },
+      "refinement": {
+        "max_T_change_K": 3.6806613934459165e-06,
+        "max_C_change": 7.643432553550156e-10,
+        "time_T_change_K": 4.321162805354106e-08,
+        "time_C_change": 9.568346115429449e-12
+      }
+    },
+    "lewis_aw1": {
+      "mode": "gas_latent",
+      "activity": 1.0,
+      "coefficient": "lewis",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 31.665843397309743,
+        "surface_T_C": 34.16185833482251,
+        "center_C": 2.5499990695836683,
+        "surface_C": 2.4508016653261393,
+        "mean_C": 2.527082589386362,
+        "mean_T_C": 32.91561189429444,
+        "mass_lost_g": 1.6630331953506035,
+        "sensible_J": 3292.4156658409916,
+        "convection_J": 7283.695334654427,
+        "latent_J": 3991.279669318359
+      },
+      "checks": {
+        "mass_balance_abs_kg": 2.192554731522689e-12,
+        "energy_balance_abs_J": 5.049241735832766e-07,
+        "energy_relative_residual": 6.932252797298428e-11,
+        "min_accepted_T_C": 26.733529134176138,
+        "min_accepted_C": 2.4508016653261393,
+        "evaporating_samples_below_dewpoint": 0
+      },
+      "refinement": {
+        "max_T_change_K": 0.00014361469726509313,
+        "max_C_change": 0.00015833050808700122,
+        "time_T_change_K": 7.829817150195595e-08,
+        "time_C_change": 1.779183911310156e-09
+      }
+    },
+    "lewis_aw08": {
+      "mode": "gas_latent",
+      "activity": 0.8,
+      "coefficient": "lewis",
+      "n": 800,
+      "rtol": 1e-09,
+      "max_step": 10.0,
+      "final": {
+        "center_T_C": 34.58162993833264,
+        "surface_T_C": 37.37576077643689,
+        "center_C": 2.5500002784845694,
+        "surface_C": 2.5802289798965905,
+        "mean_C": 2.5607515411450303,
+        "mean_T_C": 35.987968478347966,
+        "mass_lost_g": -0.7802002646286464,
+        "sensible_J": 5350.241866507602,
+        "convection_J": 3477.761231356833,
+        "latent_J": -1872.480635648888
+      },
+      "checks": {
+        "mass_balance_abs_kg": 1.137859338001812e-12,
+        "energy_balance_abs_J": 4.981188794772606e-07,
+        "energy_relative_residual": 1.4322975222853978e-10,
+        "min_accepted_T_C": 28.0,
+        "min_accepted_C": 2.55,
+        "evaporating_samples_below_dewpoint": 0
+      },
+      "refinement": {
+        "max_T_change_K": 1.7847449385044456e-05,
+        "max_C_change": 1.819433835814621e-05,
+        "time_T_change_K": 7.832863957446534e-08,
+        "time_C_change": 1.8763599562987565e-09
+      }
+    }
+  },
+  "input_sha256": {
+    "problemA/problemA.pdf": "052d8014bff5727c019b72e44fdffaf5c145ce04050dd938baaf3527db331736",
+    "problemA/附件/附件1.xlsx": "7ef32870abeef420b89560b2530ff60dfe4255917805151d89988d0311af9dd7",
+    "problemA/附件/附件2.xlsx": "5563acbfa4b4afb10cc6c03e2207e5369bf39da27576672aff14cc5c32e704af",
+    "problemA/附件/附件3/result1.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+    "problemA/附件/附件3/result2.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+    "problemA/附件/附件3/result3.xlsx": "07e4793d620a7f899804c0298d49a16a197960440fd47f8bb780c57ec27e2859",
+    "problemA/附件/附件3/result4.xlsx": "86e9300ffa3d30c43de895ea6723da943e85b8740b137bcae5af7107f076eeac"
+  }
+}

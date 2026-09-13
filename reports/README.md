@@ -17,6 +17,8 @@
 | [`q4/`](q4/) | Q4 方法概览、算法分析和收缩机制结果报告 | 正式结果已完成 |
 | [`PAPER_DATA_PACKAGE.md`](PAPER_DATA_PACKAGE.md) | 四问论文数据、表格、图件和正文入口总索引 | 论文组稿入口 |
 | [`DRAWIO_REPORT.md`](DRAWIO_REPORT.md) | 非数据方法图源文件、PDF、依据和正文插入建议 | 4drawio 交付报告 |
+| [`appendix_code_file_list.md`](appendix_code_file_list.md) | 按公共核心与 Q1–Q4 分类的附录代码文件清单 | 论文附录交接稿 |
+| [`ai_tool_usage_details.md`](ai_tool_usage_details.md) | AI 工具、使用环节、交互示例、人工核验与提交前检查 | 可导出为竞赛要求的 AI 工具使用详情 |
 | [`../paper/`](../paper/) | CUMCM 中文 LaTeX 论文组稿工程 | 第一版正文已接入，待编译与全文验收 |
 | [`PAPER_DATA_PACKAGE.md`](PAPER_DATA_PACKAGE.md) | 四问论文数据、表格、图件和正文入口总索引 | 论文组稿入口 |
 
