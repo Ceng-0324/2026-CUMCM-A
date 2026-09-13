@@ -16,10 +16,10 @@
     },
     "code_sha256": {
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
-      "code/common/model.py": "53fdfb36489fa1c5e896791a30d5e137d921ed26773dfaf7e422cf084472c001",
-      "code/q1/q1_validation.py": "f94df10f227a8c520d9a46910127bf2c70cf6c008ec2947c344eede98ad56012",
-      "code/q1/problem1.py": "4ed945b464ae5846a4083bb9416d864b6940150c4da99065fa6caf306e34798b",
-      "code/q1/plot_q1.py": "b0ae85524e1e19a9ebbddc798513b270aab6e470afdfe75eb85639055818275a"
+      "code/common/model.py": "6cd78d63b1a9a954f2a98ae76ec75b7e5691c3cc2cdc2df687a9e5e674b1e5b8",
+      "code/q1/q1_validation.py": "b224233605e768f56455bc0b25a99eb7d07539b1ec28e8ea3b87e49361951504",
+      "code/q1/problem1.py": "f43b299e4dcf9c4c03496aef243700ee90dcbd57492a36eadf6a505ef8db9643",
+      "code/q1/plot_q1.py": "46f89bf718dc3295472ba4fd93845c45cd16eb0da62c5c701311f50c47f7cd2a"
     }
   },
   "configuration": {

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from hashlib import sha256
+from os.path import relpath
 from pathlib import Path
 import platform
 import sys
@@ -42,7 +43,7 @@ def provenance():
 
 
 def continuous_max(solution, t, points=513, *, return_profile=True):
-    """Return the reconstructed continuous maximum and optionally its profile."""
+    """求重构场全域极值；points 仅控制返回剖面的采样密度。"""
     xi = np.linspace(0.0, 1.0, points)
     if t == 0:
         c = np.full(points, 2.55)
@@ -50,11 +51,12 @@ def continuous_max(solution, t, points=513, *, return_profile=True):
     model, n = solution.model, solution.model.n
     y = solution.state([float(t)])[:, 0]
     _, water, _, cs, _, _, _, base, a = model.fluxes(t, y)
-    pk = reconstruct_profile(model.centers, kirchhoff(y[n:2*n], a),
-                             kirchhoff(cs, a), -model.radius(t)*water[-1]/base[-1])
-    # K(C) is strictly increasing: examine every cubic's endpoints and stationary points.
-    candidates = spline_candidates(pk)
-    values = pk(candidates)
+    potential_profile = reconstruct_profile(
+        model.centers, kirchhoff(y[n:2*n], a),
+        kirchhoff(cs, a), -model.radius(t)*water[-1]/base[-1])
+    # K(C) 严格递增，可先比较每段三次多项式的端点和驻点，再反解 C。
+    candidates = spline_candidates(potential_profile)
+    values = potential_profile(candidates)
     i = int(np.argmax(values))
     maximum = inverse_kirchhoff(values[i], a, 2*max(2.55, float(y[n:2*n].max()), cs))
     if not return_profile:
@@ -78,16 +80,16 @@ def locate_event(solution, scan_step=SCAN_STEP_S, profile_points=257):
         raise RuntimeError(f"在 {solution.end_s/3600:g} h 内未找到连续域达标事件")
     i = int(crossing[0])
 
-    def f(t):
+    def threshold_residual(t):
         return continuous_max(solution, t, profile_points, return_profile=False)[0] - THRESHOLD
 
-    event_s = float(brentq(f, times[i], times[i + 1], xtol=1e-5, rtol=1e-12))
-    mc, xi, p, c = continuous_max(solution, event_s, 1025)
+    event_s = float(brentq(threshold_residual, times[i], times[i + 1], xtol=1e-5, rtol=1e-12))
+    max_c, max_xi, profile_xi, profile_c = continuous_max(solution, event_s, 1025)
     return {"event_time_s": event_s, "event_time_h": event_s / 3600.0,
             "bracket_s": [float(times[i]), float(times[i + 1])],
             "scan_times_s": times, "scan_max_moisture": values,
-            "event_max_moisture": mc, "event_max_material_coordinate": xi,
-            "event_profile_xi": p, "event_profile_moisture": c}
+            "event_max_moisture": max_c, "event_max_material_coordinate": max_xi,
+            "event_profile_xi": profile_xi, "event_profile_moisture": profile_c}
 
 
 def table_times(event_s):
@@ -164,7 +166,8 @@ def plot_figures(figures_dir, event, solution, convergence, mechanism):
     ax_event.axvline(event["event_time_h"], color="#444444", ls=":", lw=1.2,
                      label=f"达标时刻 {event['event_time_h']:.4f} h")
     ax_event.set(xlabel="时间 / h", ylabel="最大含水率 / (kg/kg)")
-    ax_event.grid(alpha=.22); ax_event.legend(frameon=False, fontsize=8, loc="best")
+    ax_event.grid(alpha=.22)
+    ax_event.legend(frameon=False, fontsize=8, loc="best")
     ax_event.set_title("(a) 全域达标事件", fontsize=11)
 
     for t, color in [(max(0.0, event["event_time_s"] - 6 * 3600), "#4C78A8"),
@@ -177,7 +180,8 @@ def plot_figures(figures_dir, event, solution, convergence, mechanism):
     ax_profile.axhline(THRESHOLD, color="#B2182B", ls="--", lw=1.2,
                        label="阈值 0.15 kg/kg")
     ax_profile.set(xlabel="实际到中心距离 / cm", ylabel="含水率 / (kg/kg)")
-    ax_profile.grid(alpha=.22); ax_profile.legend(frameon=False, fontsize=8, loc="best")
+    ax_profile.grid(alpha=.22)
+    ax_profile.legend(frameon=False, fontsize=8, loc="best")
     ax_profile.set_title("(b) 事件前与达标时刻剖面", fontsize=11)
     fig.savefig(figures_dir / "q4_shrink_event_combined.pdf", format="pdf",
                 bbox_inches="tight")
@@ -215,14 +219,20 @@ def plot_figures(figures_dir, event, solution, convergence, mechanism):
     ax.set_xticks(xs, labels)
     ax.set_ylabel("连续达标时刻 / h")
     ax.set_title("Q4 从基准到正式组合的机制路径")
-    ax.grid(axis="y", alpha=.2); ax.set_xlim(-0.35, 4.35)
+    ax.grid(axis="y", alpha=.2)
+    ax.set_xlim(-0.35, 4.35)
     ax.text(0.02, 0.04, "绿色：缩短达标时间    红色：延长达标时间", transform=ax.transAxes, fontsize=8, color="#555")
-    fig.savefig(figures_dir / "q4_mechanism_comparison.pdf", format="pdf", bbox_inches="tight"); plt.close(fig)
+    fig.savefig(figures_dir / "q4_mechanism_comparison.pdf", format="pdf", bbox_inches="tight")
+    plt.close(fig)
 
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.plot(convergence["grid"], convergence["event_time_h"], "o-", label="连续事件时刻")
-    ax.set(xlabel="径向单元数 N", ylabel="达标时刻/h"); ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q4_convergence.pdf", format="pdf"); plt.close(fig)
+    ax.set(xlabel="径向单元数 N", ylabel="达标时刻/h")
+    ax.grid(alpha=.25)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q4_convergence.pdf", format="pdf")
+    plt.close(fig)
 
     return sorted(p.name for p in figures_dir.glob("q4_*.pdf"))
 
@@ -257,7 +267,7 @@ def mechanism_runs():
     return {"cases": cases, "effects": effects}
 
 
-def write_report(path, summary):
+def write_report(path, summary, sensitivity_path=None):
     e, v, t = summary["event"], summary["validation"], summary["table6"]
     rows = ["| 时间/h | 0 cm | 0.5 cm | 1 cm | 1.5 cm | 药材表面 |", "|---:|---:|---:|---:|---:|---:|"]
     rows += ["| " + f"{h:g}" + " | " + " | ".join("" if x is None else f"{x:.4f}" for x in row) + " |" for h, row in zip(t["times_h"], t["moisture"])]
@@ -325,12 +335,19 @@ t_*={e['event_time_h']:.8f}\,\mathrm{{h}}={e['event_time_s']:.3f}\,\mathrm{{s}}.
 
 运行 `make q4` 可复现本结果；原始模板不会被覆盖。
 '''
+    if sensitivity_path is not None:
+        reference = Path(relpath(sensitivity_path, path.parent)).as_posix()
+        report += ("\n## 补充检验\n\n"
+                   f"- [物理参数敏感性与 BDF/Radau 积分器复核]({reference})。\n\n"
+                   "该证据由独立脚本生成，保留文件内的原始来源记录；"
+                   "`make q4` 只更新本报告的引用，不重算该检验。\n")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(report, encoding="utf-8")
 
 
 def run(output_dir, report_path, figures_dir):
-    start = time.perf_counter(); output_dir.mkdir(parents=True, exist_ok=True)
+    start = time.perf_counter()
+    output_dir.mkdir(parents=True, exist_ok=True)
     solutions, events = {}, {}
     for n in GRID_RUNS:
         solutions[n] = solve_radial(n, appendix=4, shrink=True, duration_s=DURATION_S,
@@ -342,9 +359,11 @@ def run(output_dir, report_path, figures_dir):
                          rtol=5e-9, atol=5e-11, max_step=60, align_environment=True)
     tight_event = locate_event(tight)
     first_t = float(np.ceil(event["event_time_s"] / OUTPUT_STEP_S) * OUTPUT_STEP_S)
-    if first_t <= event["event_time_s"] + 1e-7: first_t += OUTPUT_STEP_S
+    if first_t <= event["event_time_s"] + 1e-7:
+        first_t += OUTPUT_STEP_S
     first_c = continuous_max(formal, first_t, 513)[0]
-    event["first_strict_time_s"] = first_t; event["first_strict_time_h"] = first_t / 3600.0
+    event["first_strict_time_s"] = first_t
+    event["first_strict_time_h"] = first_t / 3600.0
     event["first_strict_max_moisture"] = first_c
     if first_c >= THRESHOLD:
         raise ValueError("后继输出时刻未严格达标")
@@ -390,18 +409,25 @@ def run(output_dir, report_path, figures_dir):
     summary["figures"] = plot_figures(figures_dir, event, formal,
                                        {"grid": list(GRID_RUNS), "event_time_h": summary["validation"]["event_time_h"]},
                                        mechanism)
-    write_json(output_dir / "summary.json", summary); write_report(report_path, summary)
+    write_json(output_dir / "summary.json", summary)
+    sensitivity_path = output_dir / "validation_sensitivity.json"
+    write_report(report_path, summary, sensitivity_path if sensitivity_path.is_file() else None)
     artifacts = [output_dir / x for x in ("result4.xlsx", "fields.npz", "summary.json", "table6.csv")]
     artifacts += sorted(figures_dir.glob("q4_*.pdf"))
+    if sensitivity_path.is_file():
+        artifacts.append(sensitivity_path)
     write_json(output_dir / "artifact_manifest.json", {"files": {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in artifacts}})
     print(f"Q4 正式结果完成，事件 {event['event_time_h']:.8f} h，耗时 {time.perf_counter()-start:.1f} s", flush=True)
 
 
 def main():
-    parser = argparse.ArgumentParser(); parser.add_argument("--output-dir", type=Path, default=ROOT / "results/q4")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "results/q4")
     parser.add_argument("--report", type=Path, default=ROOT / "reports/q4/RESULTS_REPORT.md")
     parser.add_argument("--figures-dir", type=Path, default=ROOT / "figures/q4")
-    args = parser.parse_args(); run(args.output_dir, args.report, args.figures_dir)
+    args = parser.parse_args()
+    run(args.output_dir, args.report, args.figures_dir)
 
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()

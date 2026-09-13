@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from hashlib import sha256
+from os.path import relpath
 from pathlib import Path
 import platform
 import sys
@@ -53,6 +54,7 @@ def continuous_profile(solution, t, points=513):
 
 
 def continuous_max(solution, t, points=257):
+    """在含中心和表面的径向采样点上估计重构场最大值，点数控制采样密度。"""
     positions, moisture = continuous_profile(solution, t, points)
     index = int(np.argmax(moisture))
     return float(moisture[index]), float(positions[index]), positions, moisture
@@ -89,6 +91,7 @@ def locate_event(solution, *, scan_step=SCAN_STEP_S, profile_points=257):
 
 
 def first_strict_output(solution, event_time):
+    """等号事件后的首个整分钟输出；达标判据使用未舍入的含水率。"""
     t = np.ceil(event_time / OUTPUT_STEP_S) * OUTPUT_STEP_S
     if t <= event_time + 1e-7:
         t += OUTPUT_STEP_S
@@ -155,15 +158,19 @@ def plot_figures(output_dir, figures_dir, result, formal_solution):
     ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值 0.15 kg/kg")
     ax.axvline(event / 3600.0, color="#444", ls=":", label=f"达标时刻 {event/3600:.4f} h")
     ax.set(xlabel="时间/h", ylabel="最大含水率/(kg/kg)")
-    ax.grid(alpha=.25); ax.legend(frameon=False)
+    ax.grid(alpha=.25)
+    ax.legend(frameon=False)
     # 阈值事件局部放大，突出首次达标时刻的根定位。
     inset = ax.inset_axes([0.52, 0.18, 0.43, 0.38])
     mask = (scan_t >= event - 12*3600) & (scan_t <= event + 6*3600)
     inset.plot(scan_t[mask]/3600.0, scan_c[mask], color="#1f5a94")
     inset.axhline(THRESHOLD, color="#b33", ls="--")
     inset.axvline(event/3600.0, color="#444", ls=":")
-    inset.set_title("事件附近", fontsize=8); inset.tick_params(labelsize=7)
-    fig.tight_layout(); fig.savefig(figures_dir / "q3_threshold_event.pdf", format="pdf"); plt.close(fig)
+    inset.set_title("事件附近", fontsize=8)
+    inset.tick_params(labelsize=7)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q3_threshold_event.pdf", format="pdf")
+    plt.close(fig)
 
     times = np.array([max(0.0, event - 6 * 3600), event])
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -172,20 +179,26 @@ def plot_figures(output_dir, figures_dir, result, formal_solution):
         ax.plot(pos * 100, c, label=f"{t/3600:.4f} h")
     ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值")
     ax.set(xlabel="到中心距离/cm", ylabel="含水率/(kg/kg)")
-    ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q3_threshold_profiles.pdf", format="pdf"); plt.close(fig)
+    ax.grid(alpha=.25)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q3_threshold_profiles.pdf", format="pdf")
+    plt.close(fig)
 
     convergence = result["convergence"]
     fig, ax = plt.subplots(figsize=(7, 4))
     ax.plot(convergence["grid"], convergence["event_time_h"], "o-", label="空间网格")
     ax.axhline(event / 3600.0, color="#444", ls=":", label="正式网格")
     ax.set(xlabel="径向单元数 N", ylabel="达标时刻/h")
-    ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q3_convergence.pdf", format="pdf"); plt.close(fig)
+    ax.grid(alpha=.25)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q3_convergence.pdf", format="pdf")
+    plt.close(fig)
     return sorted(p.name for p in figures_dir.glob("q3_*.pdf"))
 
 
-def write_report(path, summary):
+def write_report(path, summary, sensitivity_path=None):
     e = summary["event"]
     v = summary["validation"]
     t = summary["table5"]
@@ -258,6 +271,12 @@ t_*={e['event_time_h']:.8f}\,\mathrm{{h}}
 
 运行 `make q3` 可复现本结果；原始模板不会被覆盖。
 '''
+    if sensitivity_path is not None:
+        reference = Path(relpath(sensitivity_path, path.parent)).as_posix()
+        report += ("\n## 补充检验\n\n"
+                   f"- [物理参数敏感性与 BDF/Radau 积分器复核]({reference})。\n\n"
+                   "该证据由独立脚本生成，保留文件内的原始来源记录；"
+                   "`make q3` 只更新本报告的引用，不重算该检验。\n")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(report, encoding="utf-8")
 
@@ -336,9 +355,12 @@ def run(output_dir, report_path, figures_dir):
         **event, "convergence": {"grid": list(GRID_RUNS),
                                   "event_time_h": summary["validation"]["event_time_h"]}}, formal)
     write_json(output_dir / "summary.json", summary)
-    write_report(report_path, summary)
+    sensitivity_path = output_dir / "validation_sensitivity.json"
+    write_report(report_path, summary, sensitivity_path if sensitivity_path.is_file() else None)
     artifacts = [output_dir / n for n in ("result3.xlsx", "fields.npz", "summary.json", "table5.csv")]
     artifacts += sorted(figures_dir.glob("q3_*.pdf"))
+    if sensitivity_path.is_file():
+        artifacts.append(sensitivity_path)
     write_json(output_dir / "artifact_manifest.json",
                {"files": {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in artifacts}})
     print(f"Q3 正式结果完成，事件 {event['event_time_h']:.8f} h，耗时 {time.perf_counter()-start:.1f} s。", flush=True)

@@ -16,8 +16,8 @@
     },
     "code_sha256": {
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
-      "code/common/model.py": "db98497e445b7f54e754bace42cc754317f53f0d66bbb067824dfca1912af1b7",
-      "code/q2/problem2.py": "b3ae77b18a2122ba7c7676a7aa5fca0d864f2147c59aa8581e46e86479771749"
+      "code/common/model.py": "6cd78d63b1a9a954f2a98ae76ec75b7e5691c3cc2cdc2df687a9e5e674b1e5b8",
+      "code/q2/problem2.py": "de6376729b030331a649b78cd02aad4f6bf31798a1cdd58f82d365fc05248bca"
     }
   },
   "configuration": {
@@ -30,7 +30,8 @@
     "atol": 2e-09,
     "max_step": 60,
     "align_environment": true,
-    "stop_at_cell_threshold": false
+    "stop_at_cell_threshold": false,
+    "method": "BDF"
   },
   "tables": {
     "times_h": [

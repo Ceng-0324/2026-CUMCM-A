@@ -16,8 +16,8 @@
     },
     "code_sha256": {
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
-      "code/common/model.py": "53fdfb36489fa1c5e896791a30d5e137d921ed26773dfaf7e422cf084472c001",
-      "code/q4/problem4.py": "09237010514c947c054d545c4969b1ba1d160f100c841d7e81ca1773bfbbe418"
+      "code/common/model.py": "6cd78d63b1a9a954f2a98ae76ec75b7e5691c3cc2cdc2df687a9e5e674b1e5b8",
+      "code/q4/problem4.py": "242ad0fec837383eabcecb7dcdbeeee77a6a258b3155f9d48d85049fdbbbba1b"
     }
   },
   "configuration": {

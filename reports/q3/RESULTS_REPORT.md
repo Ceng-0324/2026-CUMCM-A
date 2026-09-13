@@ -75,4 +75,9 @@ t_*=57.47406473\,\mathrm{h}
 - [`../../results/q3/artifact_manifest.json`](../../results/q3/artifact_manifest.json)：产物哈希。
 
 运行 `make q3` 可复现本结果；原始模板不会被覆盖。
-- [`../../results/q3/validation_sensitivity.json`](../../results/q3/validation_sensitivity.json)：物理参数敏感性与 BDF/Radau 独立积分器复核。
+
+## 补充检验
+
+- [物理参数敏感性与 BDF/Radau 积分器复核](../../results/q3/validation_sensitivity.json)。
+
+该证据由独立脚本生成，保留文件内的原始来源记录；`make q3` 只更新本报告的引用，不重算该检验。

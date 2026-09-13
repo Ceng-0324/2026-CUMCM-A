@@ -32,5 +32,22 @@
       },
       "delta_s_pchip_minus_linear": -12.74727767080185
     }
-  ]
+  ],
+  "provenance": {
+    "input_sha256": {
+      "problemA/problemA.pdf": "052d8014bff5727c019b72e44fdffaf5c145ce04050dd938baaf3527db331736",
+      "problemA/附件/附件1.xlsx": "7ef32870abeef420b89560b2530ff60dfe4255917805151d89988d0311af9dd7",
+      "problemA/附件/附件2.xlsx": "5563acbfa4b4afb10cc6c03e2207e5369bf39da27576672aff14cc5c32e704af",
+      "problemA/附件/附件3/result1.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result2.xlsx": "23b261b295c1b787d000eebbca6521c37075107b6fcf78724f8d395ce1798ff4",
+      "problemA/附件/附件3/result3.xlsx": "07e4793d620a7f899804c0298d49a16a197960440fd47f8bb780c57ec27e2859",
+      "problemA/附件/附件3/result4.xlsx": "86e9300ffa3d30c43de895ea6723da943e85b8740b137bcae5af7107f076eeac"
+    },
+    "code_sha256": {
+      "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
+      "code/common/model.py": "6cd78d63b1a9a954f2a98ae76ec75b7e5691c3cc2cdc2df687a9e5e674b1e5b8",
+      "code/q4/problem4.py": "242ad0fec837383eabcecb7dcdbeeee77a6a258b3155f9d48d85049fdbbbba1b",
+      "code/q4/q4_interpolation_sensitivity.py": "8e776d2eb1653f69cd526983ae86567cbb5ad8c03c94a6e21042d16fa195a902"
+    }
+  }
 }

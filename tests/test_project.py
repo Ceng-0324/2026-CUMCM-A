@@ -14,7 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'code/common'))
 from audit import audit_inputs
 from data_io import verify_inputs
-from model import analytic_radial_check, divergence, kirchhoff, material_parameters, probe_a, radial_geometry, solve_radial
+from model import (analytic_radial_check, divergence, kirchhoff, material_parameters,
+                   probe_a, radial_geometry, solve_radial, surface_moisture)
 
 
 class InputTests(unittest.TestCase):
@@ -53,6 +54,22 @@ class InputTests(unittest.TestCase):
 
 
 class NumericalTests(unittest.TestCase):
+    def test_surface_boundary_balances_diffusion_and_robin_in_both_directions(self):
+        dr, km = .02/64, 8e-7
+        for a in [.89, .45, .30]:
+            for cell_c, equilibrium_c in [(2.55, .02), (.05, .15), (.15, .15)]:
+                with self.subTest(a=a, cell=cell_c, equilibrium=equilibrium_c):
+                    base = 7e-9
+                    surface_c = surface_moisture(cell_c, equilibrium_c, base, a, dr, km)
+                    self.assertGreaterEqual(surface_c, min(cell_c, equilibrium_c))
+                    self.assertLessEqual(surface_c, max(cell_c, equilibrium_c))
+                    # 用独立数值积分检查半单元通量，不复用 Kirchhoff 原函数。
+                    diffusion_flux = base * quad(lambda c: np.exp(-a/c), surface_c,
+                                                  cell_c, epsabs=1e-14)[0] / (.5*dr)
+                    robin_flux = km*(surface_c-equilibrium_c)
+                    self.assertAlmostEqual(diffusion_flux, robin_flux, delta=1e-15)
+                    self.assertEqual(np.sign(robin_flux), np.sign(cell_c-equilibrium_c))
+
     def test_nonlinear_primitive_matches_independent_quadrature(self):
         for a in [.89, .45, .30]:
             for c in [.05, .15, 1., 2.55]:

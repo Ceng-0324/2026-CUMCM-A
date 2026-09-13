@@ -2,12 +2,12 @@
   "files": {
     "results/q2/result2.xlsx": "0625fa49cbbfed72c20942c959a646fba2f9baf06ae4bf51eedb781aa33ae7df",
     "results/q2/fields.npz": "a9fbeac38480b60758172d7c4e6bbb6fc278d8afbb5ae916205794e9c9ea21f4",
-    "results/q2/summary.json": "8ab0e29eb31817fe685eeeb8c4c1d6424f36f08d1709ac54ef1350e34f1131bd",
+    "results/q2/summary.json": "44710167af2ef672579d6941afd43a05ea74b935c18feb96fa3002b6ba8412c3",
     "results/q2/table3.csv": "afa8446dd8feda252d6448494e0ae2492ade924db6ae04d95204a9c02f31f4fe",
     "results/q2/table4.csv": "38a2001dd654adb1b4243666ac837a249fbaf48dcd9e0502c733c6fb4485e159",
-    "figures/q2/q2_spatiotemporal_heatmaps.pdf": "8507c634f6455d56bcd8abeb33ae518601550d7ae53ffb8a3c62f4ca644e86b8",
-    "q2_convergence.pdf": "71bb17a32f56e15628b772faeef1a5c58013d521a2270314d42f394a9c513899",
-    "q2_history.pdf": "d48c038e639ac0fe96949dbfa0f4d44b4f87c3322baf66e9411747fbf45e4393",
-    "q2_profiles.pdf": "04fc27ad7a7d307fc1302a170ffe6bb6d81ad098e0827695bebc134fd1700b69"
+    "figures/q2/q2_convergence.pdf": "4174dc82330209fc668c0cab0d310e5403e63d2f1ee24f65d1f8a90f6fe6dcab",
+    "figures/q2/q2_history.pdf": "0bfec24f0acb703cd3323f0212edc016405e135142f475acdd91e55de70f6635",
+    "figures/q2/q2_profiles.pdf": "3f9ab1a1af5416fe1bcbd354e1567476be8cc7af55250cdd41d7640b04ca8e5c",
+    "figures/q2/q2_spatiotemporal_heatmaps.pdf": "22fb66cd7ee4725f75fe2f8c3838e401adfd171f1c031cf93db2b67d41fb6c9a"
   }
 }

@@ -3,15 +3,13 @@ from __future__ import annotations
 
 import argparse
 from hashlib import sha256
-import json
 from pathlib import Path
 import platform
+import sys
 
 import numpy as np
 import scipy
 
-from pathlib import Path
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from data_io import ROOT, verify_inputs, write_json
 from model import analytic_radial_check, probe_a
@@ -100,7 +98,7 @@ def main():
         save(args.output_dir / 'feasibility.json', feasibility(args.grids), source)
     if args.mode in ['mechanism', 'all']:
         save(args.output_dir / 'mechanism.json', mechanism(), source)
-    print('原型运行完成；连续域输出、模型假设与正式表格仍需验证。')
+    print('历史原型复算完成；最大单元事件与各问正式连续场事件口径不同。')
 
 
 if __name__ == '__main__':

@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from hashlib import sha256
-import json
 from pathlib import Path
 import platform
 import time
@@ -28,7 +27,7 @@ RADII = np.arange(21)*.001
 TABLE_TIMES = np.array([100, 300, 600, 900, 1200, 1500, 1800])
 TABLE_COLUMNS = np.array([0, 5, 10, 15, 20])
 GRIDS = [1024, 2048, 4096]
-# Numerical targets, not confidence intervals on the physical material model.
+# 控制离散误差的验收阈值，不表示物性模型的置信区间。
 LIMITS = dict(spatial_temperature_K=5e-6, spatial_moisture=4e-5,
               temporal_temperature_K=1e-6, temporal_moisture=1e-7,
               independent_heat_K=1e-6)
@@ -118,7 +117,7 @@ def write_report(path, summary, with_figures):
     d = v['diagnostics']
     report = f'''# 计算结果：问题一
 
-本报告仅覆盖 Q1。在明确的一维径向、把附件 1 浓度视为有效表面平衡浓度、无显式潜热假设下，已完成中心/表面重构、连续场采样、正式格式工作簿及数值验证。Q2–Q4 正式输出尚未完成；本报告不将条件模型下的数值收敛等同于实验验证或唯一物理解。
+本报告覆盖一维径向、有效表面平衡浓度和无显式潜热假设下的 Q1 预热计算，包括中心/表面重构、连续场采样、正式工作簿及数值验证。Q2–Q4 的变物性、长期事件和收缩域结果见各问报告。这里的数值收敛不等同于实验验证。
 
 ## 运行环境与数据
 
@@ -130,7 +129,7 @@ Python {summary['provenance']['python']}，NumPy {summary['provenance']['numpy']
 
 共用 solve_radial 和 RadialSolution.sample。有限体积离散沿用单元中点近似量解释；中心按偶二次式 (9q₀−q₁)/8 恢复。内部斜率由 PCHIP 确定，分段 Hermite 重构在中心强制零梯度、表面强制与通量一致的梯度。温度直接重构，水分在 K(C) 空间重构后反解；表面浓度由非线性半单元通量与 Robin 条件联合求根。
 
-Q1 采用 {GRIDS[-1]} 个均匀径向单元、BDF、rtol=10⁻¹⁰、atol=10⁻¹¹、最大步长 10 s，在附件每个 60 s 插值节点分段积分。输出采样与内部步长分离。采样支持任意区间内时间、实际半径或材料坐标，越界默认报错，也可显式返回 NaN；当前接口尚未提供 Q3 连续域事件认证。
+Q1 采用 {GRIDS[-1]} 个均匀径向单元、BDF、rtol=10⁻¹⁰、atol=10⁻¹¹、最大步长 10 s，在附件每个 60 s 插值节点分段积分。输出采样与内部步长分离。采样支持积分区间内任意时间、实际半径或材料坐标，越界默认报错，也可显式返回 NaN。Q3、Q4 在连续重构场上进一步定位达标事件。
 
 ## 问题一结果
 
@@ -170,7 +169,7 @@ Q1 采用 {GRIDS[-1]} 个均匀径向单元、BDF、rtol=10⁻¹⁰、atol=10⁻
 
 另以相同换热条件的有限圆柱热方程特征展开检查中截面：在论文表格时空点，含端面换热与一维径向基准的最大温差为 {v['end_effect']['midplane_max_temperature_change_K']:.3e} K，模态加密变化为 {v['end_effect']['series_refinement_change_K']:.3e} K。这只支持本问预热时段中截面温度的径向近似；不证明端面附近、水分场或后续数十小时过程同样可以忽略端部。
 
-有效平衡浓度与无显式潜热仍是题目数据不足条件下采用的 Q1 基线解释，未通过药材实验识别。复核确认空气浓度与药材干基含水率的分母不同；湿空气换算和潜热耦合情景对传质系数、水活度等额外假设敏感，因此不替换当前工作簿。相关情景与收支见 `results/q1/physics/summary.json`。热收支检验仅对 Q1 的常热物性显热方程成立。Q2–Q4 的密度解释、长期端部敏感性、连续域事件及正式工作簿仍待后续验证。
+有效平衡浓度与无显式潜热仍是题目数据不足条件下采用的 Q1 基线解释，未通过药材实验识别。复核确认空气浓度与药材干基含水率的分母不同；湿空气换算和潜热耦合情景对传质系数、水活度等额外假设敏感，因此不替换当前工作簿。相关情景与收支见 `results/q1/physics/summary.json`。热收支检验仅对 Q1 的常热物性显热方程成立，不能直接作为后续变物性和收缩模型的能量检验。
 
 ## 产物与复现
 
@@ -219,7 +218,7 @@ def run(output_dir, report_path, figures_dir=None):
         previous, previous_dense = fields, dense
         print(f'Q1 N={n} 完成，t=1800 s 表面 C={fields.moisture[-1,-1]:.9f}', flush=True)
     diagnostics = diagnose(solution, fields)
-    # Snapshot of fields used by plots, without retaining large internal solution arrays on disk.
+    # 保存绘图所需剖面后释放细网格解，给时间加密复算留出内存。
     profile = solution.sample(TABLE_TIMES, np.linspace(0, .02, 401))
     configuration = solution.configuration
     room = solution.model.room

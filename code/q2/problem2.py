@@ -95,16 +95,24 @@ def plot_figures(output_dir, figures_dir):
         ax[1].plot(radii, c[i], label=f"{times[i]/3600:.1f} h")
     ax[0].set(xlabel="到中心距离/cm", ylabel="温度/°C")
     ax[1].set(xlabel="到中心距离/cm", ylabel="含水率/(kg/kg)")
-    for a in ax: a.grid(alpha=.25); a.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q2_profiles.pdf", format="pdf"); plt.close(fig)
+    for axis in ax:
+        axis.grid(alpha=.25)
+        axis.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q2_profiles.pdf", format="pdf")
+    plt.close(fig)
     fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     for j, label in [(0, "中心"), (10, "1 cm"), (20, "表面")]:
         ax[0].plot(times / 3600, tc[:, j], label=label)
         ax[1].plot(times / 3600, c[:, j], label=label)
     ax[0].set(xlabel="时间/h", ylabel="温度/°C")
     ax[1].set(xlabel="时间/h", ylabel="含水率/(kg/kg)")
-    for a in ax: a.grid(alpha=.25); a.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q2_history.pdf", format="pdf"); plt.close(fig)
+    for axis in ax:
+        axis.grid(alpha=.25)
+        axis.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q2_history.pdf", format="pdf")
+    plt.close(fig)
     # 全烘干过程温度与含水率时空热力图
     fig, ax = plt.subplots(1, 2, figsize=(10, 4), constrained_layout=True)
     moisture_cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
@@ -114,13 +122,18 @@ def plot_figures(output_dir, figures_dir):
         mesh = a.pcolormesh(radii, times/3600, field, shading="auto", cmap=cmap, edgecolors="none", linewidth=0, antialiased=False, rasterized=True)
         a.set(xlabel="到中心距离/cm", ylabel="时间/h", title=title)
         fig.colorbar(mesh, ax=a, pad=0.02, label=label)
-    fig.savefig(figures_dir / "q2_spatiotemporal_heatmaps.pdf", format="pdf", bbox_inches="tight"); plt.close(fig)
+    fig.savefig(figures_dir / "q2_spatiotemporal_heatmaps.pdf", format="pdf", bbox_inches="tight")
+    plt.close(fig)
     conv = data["convergence"].item()
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.semilogy(conv["times_h"], conv["moisture_difference"], label="1024→2048 含水率差")
     ax.semilogy(conv["times_h"], conv["temperature_difference"], label="1024→2048 温度差")
-    ax.set(xlabel="时间/h", ylabel="最大场差"); ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q2_convergence.pdf", format="pdf"); plt.close(fig)
+    ax.set(xlabel="时间/h", ylabel="最大场差")
+    ax.grid(alpha=.25)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig.savefig(figures_dir / "q2_convergence.pdf", format="pdf")
+    plt.close(fig)
     return sorted(p.name for p in figures_dir.glob("q2_*.pdf"))
 
 
@@ -177,37 +190,37 @@ Python {summary["provenance"]["python"]}，NumPy {summary["provenance"]["numpy"]
 def run(output_dir, report_path, figures_dir):
     start = time.perf_counter()
     output_dir.mkdir(parents=True, exist_ok=True)
-    sols = {}
+    solutions = {}
     for n in GRIDS:
-        sols[n] = solve_radial(n, appendix=3, duration_s=DURATION_S, rtol=2e-7,
-                               atol=2e-9, max_step=60, align_environment=True)
+        solutions[n] = solve_radial(n, appendix=3, duration_s=DURATION_S, rtol=2e-7,
+                                    atol=2e-9, max_step=60, align_environment=True)
         print(f"Q2 N={n} 完成，耗时累计 {time.perf_counter()-start:.2f} s", flush=True)
-    solution = sols[1024]
+    solution = solutions[1024]
     fields = solution.sample(TIMES_S, RADII_CM / 100)
     diag_times = TABLE_TIMES_S
-    coarse = sols[512].sample(diag_times, RADII_CM / 100)
-    fine = sols[2048].sample(diag_times, RADII_CM / 100)
-    base = solution.sample(diag_times, RADII_CM / 100)
+    fine = solutions[2048].sample(diag_times, RADII_CM / 100)
+    formal_samples = solution.sample(diag_times, RADII_CM / 100)
     tight = solve_radial(1024, appendix=3, duration_s=DURATION_S, rtol=5e-9,
                          atol=5e-11, max_step=15, align_environment=True)
-    tight_base = tight.sample(diag_times, RADII_CM / 100)
-    spatial_t = float(np.max(abs(fine.temperature_K - base.temperature_K)))
-    spatial_c = float(np.max(abs(fine.moisture - base.moisture)))
-    temporal_t = float(np.max(abs(tight_base.temperature_K - base.temperature_K)))
-    temporal_c = float(np.max(abs(tight_base.moisture - base.moisture)))
+    tight_samples = tight.sample(diag_times, RADII_CM / 100)
+    spatial_t = float(np.max(abs(fine.temperature_K - formal_samples.temperature_K)))
+    spatial_c = float(np.max(abs(fine.moisture - formal_samples.moisture)))
+    temporal_t = float(np.max(abs(tight_samples.temperature_K - formal_samples.temperature_K)))
+    temporal_c = float(np.max(abs(tight_samples.moisture - formal_samples.moisture)))
     n, model = solution.model.n, solution.model
     balance = 2 * model.weights @ solution.y[n:2*n] + solution.y[-1] - 2.55
     residuals = []
     for t in diag_times:
         y = solution.state([t])[:, 0]
         *_, cs, _, _, _, base_d, a = model.fluxes(t, y)
-        c = np.maximum(y[n:2*n], 1e-10); dr = model.radius(t) / n
+        c = np.maximum(y[n:2*n], 1e-10)
+        dr = model.radius(t) / n
         ca = model.environment(t)[1]
         residuals.append(abs(base_d[-1] * (kirchhoff(c[-1], a) - kirchhoff(cs, a))
                              - .5 * dr * model.km * (cs - ca)))
     tables = {"times_h": (diag_times / 3600).tolist(),
-              "temperature_C": (base.temperature_K - 273.15)[:, TABLE_COLUMNS].tolist(),
-              "moisture": base.moisture[:, TABLE_COLUMNS].tolist()}
+              "temperature_C": (formal_samples.temperature_K - 273.15)[:, TABLE_COLUMNS].tolist(),
+              "moisture": formal_samples.moisture[:, TABLE_COLUMNS].tolist()}
     summary = {"scope": "Q2 first 3 h formal output; appendix 3 from common initial state",
                "provenance": provenance(), "configuration": solution.configuration, "tables": tables,
                "validation": {"grids": list(GRIDS), "spatial_max_temperature_K": spatial_t,
@@ -217,10 +230,10 @@ def run(output_dir, report_path, figures_dir):
                               "min_moisture": float(fields.moisture.min()),
                               "max_water_balance_residual": float(np.max(abs(balance))),
                               "max_surface_moisture_residual": float(max(residuals)),
-                              "nfev": {str(n): int(s.segments[-1].nfev) for n, s in sols.items()}}}
+                              "nfev": {str(n): int(s.segments[-1].nfev) for n, s in solutions.items()}}}
     conv = {"times_h": (diag_times / 3600).tolist(),
-            "temperature_difference": np.max(abs(fine.temperature_K - base.temperature_K), axis=1).tolist(),
-            "moisture_difference": np.max(abs(fine.moisture - base.moisture), axis=1).tolist()}
+            "temperature_difference": np.max(abs(fine.temperature_K - formal_samples.temperature_K), axis=1).tolist(),
+            "moisture_difference": np.max(abs(fine.moisture - formal_samples.moisture), axis=1).tolist()}
     np.savez_compressed(output_dir / "fields.npz", times_s=TIMES_S, radii_cm=RADII_CM,
                         temperature_C=fields.temperature_K - 273.15, moisture=fields.moisture,
                         convergence=conv)

@@ -1,7 +1,7 @@
 """A 题共用径向求解器及连续场接口。
 
 物理边界：一维径向、均匀材料收缩、有效表面平衡浓度、无显式潜热。
-probe_a 保留历史最大单元事件；连续域达标事件留给 Q3 阶段实现。
+probe_a 保留历史最大单元事件；Q3、Q4 的正式入口在连续重构场上定位事件。
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from data_io import input_rows
 
 
 def radial_geometry(n):
+    """材料坐标 ξ=r/R 的环形网格；weights 为每个单元的 ∫ξ dξ。"""
     edges = np.linspace(0, 1, n + 1)
     centers = (edges[:-1] + edges[1:]) / 2
     weights = np.diff(edges ** 2) / 2
@@ -25,6 +26,7 @@ def radial_geometry(n):
 
 
 def divergence(flux, radius, edges, weights):
+    """向外为正的界面通量转为单元变化率，即径向散度的负值。"""
     return -np.diff(edges * flux) / (radius * weights)
 
 
@@ -39,6 +41,7 @@ def sparsity(n):
 
 
 def material_parameters(c, t, appendix):
+    """返回 ρ、cp、k、D0(T)、a；t 用 K，扩散率为 D0(T) exp(-a/C)。"""
     if appendix not in (2, 3, 4):
         raise ValueError("物性附录必须为 2、3 或 4")
     if appendix == 2:
@@ -49,7 +52,7 @@ def material_parameters(c, t, appendix):
 
 
 def kirchhoff(c, a):
-    # Integral of exp(-a/C); this retains the nonlinear surface resistance.
+    """K(C)=∫₀ᶜ exp(-a/u) du，供内部和表面水分通量使用。"""
     safe = np.maximum(c, 1e-12)
     return safe*np.exp(-a/safe) + a*expi(-a/safe)
 
@@ -71,6 +74,23 @@ def inverse_kirchhoff(value, a, upper):
     return (lo+hi)/2
 
 
+def surface_moisture(cell_c, equilibrium_c, base, a, dr, km):
+    """联立最外半单元扩散与 Robin 通量，求真实表面含水率 Cs。
+
+    base 是 D0(T)，dr 是完整单元宽度，equilibrium_c 是空气对应的
+    有效平衡含水率。方程为 D0[K(Ccell)-K(Cs)] = (dr/2) km(Cs-Ceq)。
+    Cs 位于 Ccell 与 Ceq 之间；交换二者大小时，通量可自然反向。
+    """
+    cell_potential = kirchhoff(cell_c, a)
+
+    def residual(surface_c):
+        return (base * (cell_potential - kirchhoff(surface_c, a))
+                - .5 * dr * km * (surface_c - equilibrium_c))
+
+    return brentq(residual, min(cell_c, equilibrium_c), max(cell_c, equilibrium_c),
+                  xtol=1e-12)
+
+
 def reconstruct_profile(centers, values, surface_value, surface_gradient):
     """中点近似量的连续重构，坐标为 ξ；中心用偶二次外推。
 
@@ -86,6 +106,8 @@ def reconstruct_profile(centers, values, surface_value, surface_gradient):
 
 
 class RadialModel:
+    """状态依次为 N 个温度、N 个干基含水率、累计归一化失水量。"""
+
     km, h, r0 = 8e-7, 25., .02
 
     def __init__(self, n, appendix=3, shrink=False, boundary='mean'):
@@ -113,37 +135,36 @@ class RadialModel:
 
     def fluxes(self, t, y):
         n, km, h = self.n, self.km, self.h
-        temp, moisture = y[:n], y[n:2*n]
+        temperature, moisture = y[:n], y[n:2*n]
         self.moisture_floor_evaluations += int(np.any(moisture < 1e-10))
-        c = np.maximum(moisture,1e-10)
-        rad = self.radius(t)
-        dr = rad/n
-        ta, ca = self.environment(t)
-        rho, cp, k, base, a = material_parameters(c,temp,self.appendix)
+        c = np.maximum(moisture, 1e-10)
+        radius = self.radius(t)
+        dr = radius/n
+        ambient_t, equilibrium_c = self.environment(t)
+        rho, cp, k, base, a = material_parameters(c, temperature, self.appendix)
+
+        # 环面导热用调和平均；表面串联半单元导热阻力与对流阻力。
         heat = np.zeros(n+1)
-        kface = 2*k[:-1]*k[1:]/(k[:-1]+k[1:])
-        heat[1:-1] = -kface*np.diff(temp)/dr
-        heat[-1] = (temp[-1]-ta)/(.5*dr/k[-1]+1/h)
+        k_face = 2*k[:-1]*k[1:]/(k[:-1]+k[1:])
+        heat[1:-1] = -k_face*np.diff(temperature)/dr
+        heat[-1] = (temperature[-1]-ambient_t)/(.5*dr/k[-1]+1/h)
+
+        # 只对 exp(-a/C) 积分；含温度的 D0 保留在界面系数中。
         water = np.zeros(n+1)
-        baseface = (base[:-1]+base[1:])/2
-        water[1:-1] = -baseface*np.diff(kirchhoff(c,a))/dr
-        pcell = kirchhoff(c[-1],a)
-
-        def surface_equation(cs):
-            return base[-1]*(pcell-kirchhoff(cs,a))-.5*dr*km*(cs-ca)
-
-        cs = brentq(surface_equation,min(c[-1],ca),max(c[-1],ca),xtol=1e-12)
-        water[-1] = km*(cs-ca)
-        ts = ta+heat[-1]/h
+        base_face = (base[:-1]+base[1:])/2
+        water[1:-1] = -base_face*np.diff(kirchhoff(c, a))/dr
+        cs = surface_moisture(c[-1], equilibrium_c, base[-1], a, dr, km)
+        water[-1] = km*(cs-equilibrium_c)
+        ts = ambient_t+heat[-1]/h
         return heat, water, ts, cs, rho, cp, k, base, a
 
     def rhs(self, t, y):
-        rad = self.radius(t)
+        radius = self.radius(t)
         heat, water, _, _, rho, cp, *_ = self.fluxes(t, y)
-        ct = divergence(water,rad,self.edges,self.weights)
-        tt = divergence(heat,rad,self.edges,self.weights)/(rho*cp)
-        lost_rate = 2*water[-1]/rad
-        return np.concatenate([tt,ct,[lost_rate]])
+        moisture_rate = divergence(water, radius, self.edges, self.weights)
+        temperature_rate = divergence(heat, radius, self.edges, self.weights)/(rho*cp)
+        lost_rate = 2*water[-1]/radius
+        return np.concatenate([temperature_rate, moisture_rate, [lost_rate]])
 
 
 @dataclass
@@ -205,13 +226,16 @@ class RadialSolution:
                 continue
             y, rad, x = states[:, i], radii[i], xi[i, valid]
             heat, water, ts, cs, _, _, k, base, a = model.fluxes(t, y)
-            pt = reconstruct_profile(model.centers, y[:n], ts, -rad*heat[-1]/k[-1])
-            pk = reconstruct_profile(model.centers, kirchhoff(y[n:2*n], a),
-                                     kirchhoff(cs, a), -rad*water[-1]/base[-1])
-            c = inverse_kirchhoff(pk(x), a, 2*max(2.55, float(y[n:2*n].max()), cs))
-            fields[0][i, valid], fields[1][i, valid] = pt(x), c
-            fields[2][i, valid] = pt(x, 1)/rad
-            fields[3][i, valid] = pk(x, 1)/(rad*np.exp(-a/c))
+            temperature_profile = reconstruct_profile(
+                model.centers, y[:n], ts, -rad*heat[-1]/k[-1])
+            potential_profile = reconstruct_profile(
+                model.centers, kirchhoff(y[n:2*n], a),
+                kirchhoff(cs, a), -rad*water[-1]/base[-1])
+            c = inverse_kirchhoff(potential_profile(x), a,
+                                  2*max(2.55, float(y[n:2*n].max()), cs))
+            fields[0][i, valid], fields[1][i, valid] = temperature_profile(x), c
+            fields[2][i, valid] = temperature_profile(x, 1)/rad
+            fields[3][i, valid] = potential_profile(x, 1)/(rad*np.exp(-a/c))
         return FieldSamples(times, xi*radii[:, None], *fields)
 
 
@@ -225,13 +249,16 @@ def solve_radial(n, *, appendix=3, shrink=False, boundary='mean', duration_s=180
     if atol is not None and (np.any(~np.isfinite(atol)) or np.any(np.asarray(atol) <= 0)):
         raise ValueError('绝对容差必须为有限正数')
     model = RadialModel(n, appendix, shrink, boundary)
-    def threshold(t,y):
+
+    def threshold(t, y):
         return np.max(y[n:2*n])-.15
+
     threshold.terminal = True
     threshold.direction = -1
     initial = np.concatenate([np.full(n,301.15),np.full(n,2.55),[0.]])
     stops = np.array([0., duration_s])
     if align_environment:
+        # 在输入的折点重启积分，避免一个时间步跨过斜率变化。
         knots = model.room[:, 0]
         if shrink:
             knots = np.r_[knots, model.radii[:, 0]]

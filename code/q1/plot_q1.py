@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'common'))
 
 from data_io import ROOT
 
-# Keep font caches writable in a clean checkout and in CI.
+# 在全新检出和 CI 中也使用项目内的可写字体缓存。
 os.environ.setdefault('MPLCONFIGDIR', str(ROOT/'.mpl-cache'))
 os.environ.setdefault('XDG_CACHE_HOME', str(ROOT/'.mpl-cache'))
 import matplotlib
@@ -27,8 +27,7 @@ def plot(output_dir, figures_dir):
     family = next((name for name in candidates if name in fonts), None)
     if family is None:
         raise RuntimeError('中文图件需要 Noto Sans CJK SC 等中文字体；数值复验可使用 --no-figures')
-    # TTC/OTF may contain CFF outlines that cannot be embedded as TrueType.
-    # Conservatively use vector Type 3 outlines for those font containers.
+    # 部分 TTC/OTF 的 CFF 轮廓不能按 TrueType 嵌入，改用 Type 3 矢量轮廓。
     pdf_fonttype = 42 if Path(font_manager.findfont(family)).suffix.lower() == '.ttf' else 3
     plt.rcParams.update({'font.family': [family, 'DejaVu Sans'], 'font.size': 8, 'axes.unicode_minus': False,
                          'mathtext.fontset': 'dejavusans',
@@ -75,7 +74,7 @@ def plot(output_dir, figures_dir):
     axes[0].loglog(ns, cs, 'o-', color=colors[0], label='相邻网格最大差')
     axes[0].loglog(ns, [cs[0], cs[0]/4], '--', color=colors[1], label='二阶参考斜率')
     axes[0].set(xlabel='加密后单元数', ylabel='含水率最大差 / (kg/kg)')
-    # Plain scientific labels avoid mathdefault selecting a CJK font without U+2212.
+    # 避免数学刻度选中缺少 U+2212 负号的中文字体。
     axes[0].xaxis.set_major_locator(FixedLocator(ns))
     axes[0].xaxis.set_major_formatter(FuncFormatter(lambda value, _: f'{value:.0f}'))
     axes[0].xaxis.set_minor_formatter(NullFormatter())
@@ -88,8 +87,7 @@ def plot(output_dir, figures_dir):
     axes[1].ticklabel_format(axis='y', style='sci', scilimits=(0, 0))
     save(fig, 'q1_convergence.pdf')
 
-    # 时空热力图：按期刊矩阵热力图样式取样为 11×11 方格，数据仍来自正式场。
-    # 时间取 0、3、…、30 min；半径取 0、0.2、…、2.0 cm，首行使用题设初值。
+    # 11×11 方格仅对正式场抽样；逐秒文件从 1 s 开始，0 s 行另取题设初值。
     sample_times_s = np.arange(0.0, 1800.1, 180.0)
     sample_radius_idx = np.arange(0, 21, 2)
     sample_time_idx = (sample_times_s[1:] - 1).astype(int)
@@ -111,7 +109,7 @@ def plot(output_dir, figures_dir):
                     ['#2166ac', '#f7f7f7', '#f4a582', '#b2182b']))
         im = ax.imshow(matrices[key], cmap=cmap, vmin=vmin, vmax=vmax,
                        interpolation='nearest', aspect='equal', origin='upper')
-        # 与参考文档相同的白色方格边界；仅用于区分取样单元，不表示新网格。
+        # 白色边线区分绘图采样点，不代表求解网格。
         ax.set_xticks(np.arange(-.5, 11, 1), minor=True)
         ax.set_yticks(np.arange(-.5, 11, 1), minor=True)
         ax.grid(which='minor', color='white', linewidth=0.8)

@@ -5,8 +5,6 @@ import argparse
 import math
 from pathlib import Path
 import statistics
-
-from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from data_io import ROOT, input_rows, read_xlsx, verify_inputs, write_json
@@ -26,7 +24,7 @@ def audit_inputs(root: Path = ROOT) -> dict:
         }
         if any(sheet['errors'] for sheet in sheets.values()):
             raise ValueError(f"Excel 错误单元格：{entry['path']}")
-    # Explicit columns and time grids catch mislabeled or transposed workbooks.
+    # 哈希相符仍须检查列和时间轴，避免错表、转置表被当作有效输入。
     room = input_rows('附件1.xlsx', root)
     radii = input_rows('附件2.xlsx', root)
     for name, rows, count, columns, step in [
