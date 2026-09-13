@@ -34,3 +34,4 @@ Q1 是固定半径药材在预热阶段的径向热质传递问题。模型采�
 - 结果报告：[RESULTS_REPORT.md](RESULTS_REPORT.md)
 - 表格数据：`../../results/q1/table1.csv`、`../../results/q1/table2.csv`
 - 图件：`../../figures/q1/q1_profiles.pdf`、`q1_history.pdf`、`q1_convergence.pdf`
+- 结构示意图：`../../figures/q1/fig_q1_3d_cylinder_model.pdf`（几何与 Robin 边界）、`fig_q1_3d_control_volume.pdf`（环形控制体与共享通量）；源文件和生成脚本见 `../../figures/q1/`。

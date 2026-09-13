@@ -1,42 +1,266 @@
-\section{问题一的模型建立与求解}
+\begin{center}
+    \section{问题一的模型建立与求解}
+\end{center}
 
-\subsection{控制方程与边界条件}
-令 $T(r,t)$ 和 $C(r,t)$ 分别表示药材温度和干基含水率。问题一采用固定半径 $R_0=0.02\,\mathrm m$ 的一维径向模型：
-\begin{equation}
- \rho c_p\frac{\partial T}{\partial t}=\frac1r\frac{\partial}{\partial r}\left(rk\frac{\partial T}{\partial r}\right),\qquad
- \frac{\partial C}{\partial t}=\frac1r\frac{\partial}{\partial r}\left(rD(C)\frac{\partial C}{\partial r}\right).
-\end{equation}
-中心满足 $T_r(0,t)=C_r(0,t)=0$，表面满足
-\begin{equation}
- -kT_r(R_0,t)=h(T_s-T_\infty),\qquad -D(C_s)C_r(R_0,t)=k_m(C_s-C_e).
-\end{equation}
-其中 $T_\infty,C_e$ 来自附件 1 的分段线性插值，热物性取附录 2，$D(C)=7\times10^{-9}\exp(-0.89/C)$。连续介质模型用于描述内部温度和水分场的时空变化[\cite{ref2}]。
+\subsection{建模整体思路}
+预热平衡阶段是整个烘干过程的起点，其核心任务是刻画药材从初始均匀状态向烘房环境响应的时空演化。本节沿“尺度判别—模型建立—守恒求解—结果检验"的逻辑展开：先以特征尺度分析确定主导传递过程与边界处理方式，再建立一维径向\textbf{热质双场模型}，随后采用\textbf{圆柱环形有限体积法}与Kirchhoff积分通量进行守恒离散，最后以多重独立检验确认结果可靠性。
 
-\subsection{环形有限体积离散}
-将 $[0,R_0]$ 划分为 $N$ 个环形控制体，对每个控制体积分后，中心面面积为零，内部面通量由相邻单元共享，从而保留圆柱几何权重并保证离散通量守恒。对非线性水分扩散定义 Kirchhoff 积分势
+
+\subsection{建模准备：传递过程的特征尺度分析}
+
+问题一已给出预热阶段（$0\le t\le 1800\,\mathrm{s}$）药材内部温度与水分浓度相关的静态参数和关联。而建模前需厘清几个关键问题才能决定模型的层次与数值方法的选型。
+
+\textbf{（1）判断内部梯度特征：}由附录~2 参数可得热扩散率与初始水分扩散系数为
+\begin{equation}\label{eq:q1-alpha}
+\alpha=\frac{k}{\rho c_p}=1.689\times10^{-7}\ \mathrm{m^2/s},
+\qquad
+D_0=D(2.55)=4.938\times10^{-9}\ \mathrm{m^2/s},
+\end{equation}
+
+相应的径向特征时间为
+
+\begin{equation}\label{eq:q1-tau}
+\tau_T=\frac{R^2}{\alpha}=2.369\times10^{3}\ \mathrm{s},
+\qquad
+\tau_C=\frac{R^2}{D_0}=8.101\times10^{4}\ \mathrm{s},
+\qquad
+\frac{\tau_C}{\tau_T}=34.20.
+\end{equation}
+
+
+因此：1，特征时间比值意味着在预热阶段\textbf{温度场已建立主要响应}而水分场演化尚早；2，径向导热特征时间与预热时长同量级——即 $30$ 分钟内热量无法``搅匀''整个截面，温度必须作为时空场求解，集总参数法不适用。
+
+
+
+
+\textbf{（2）判断表面状态能否直接取烘房状态：}传热与传质的毕渥数 Biot分别为
 \[
- K(C)=\int_0^C\exp(-0.89/s)\,\mathrm ds,
+\mathrm{Bi}_T=\frac{hR}{k}\approx1.39,\qquad
+\mathrm{Bi}_C=\frac{k_mR}{D_0}\approx3.24,
 \]
-则 $D(C)C_r=7\times10^{-9}K_r$。类似的积分变换可用于浓度依赖扩散通量的处理[\cite{ref4}]。最外半控制体与 Robin 条件联立，利用括区间 Brent 求根得到真实表面含水率，再计算表面通量。这样既避免直接平均低含水率下的扩散率，也不把表面状态误当作最外单元中心值。
+二者均与1同量级，说明内部传导阻力与表面对流阻力相当——表面温度与水分浓度\textbf{不能直接取烘房温度}，必须保留第三类（Robin）边界条件并单独求解表面状态。
 
-\subsection{时间推进与结果}
-空间离散后得到刚性常微分方程组，采用带稀疏结构的自适应 BDF 推进，在每个 60 s 环境节点分段积分，输出采样与内部步长分离。正式计算使用 $N=4096$、相对容差 $10^{-10}$、绝对容差 $10^{-11}$、最大步长 $10\,\mathrm s$。
+\textbf{（3）判断热—质两场是否耦合：}本问中 $\rho,c_p,k$ 为常数、$D$ 仅依赖 $C$，温度方程与水分方程在数学上相互独立、可分别求解。该解耦结构为后续问题预留了对照思路：由于附录~2 与附录~3 的物性整组不同，问题一与问题二的数值不宜逐点对照，问题二将以\textbf{冻结温度场的解耦对照}来量化耦合效应。
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.82\textwidth]{../figures/q1/q1_profiles.pdf}
-  \caption{问题一预热阶段温度与含水率径向剖面}
-  \label{fig:q1profiles}
+
+
+
+
+
+
+\subsection{模型建立}
+
+\subsubsection{一维径向模型}
+在空间维度上，长径比 $L/R=12.5$、两端面积仅占换热面积约 $7.4\%$，故忽略轴向梯度、采用一维径向模型（其误差在本节末尾用有限长圆柱解定量检验）。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{../figures/q1/fig_q1_3d_cylinder_model.pdf}
+\caption{问题一圆柱几何、径向坐标及真实表面 Robin 交换示意}
+\label{fig:q1-3d-cylinder}
 \end{figure}
 
-\begin{table}[H]\centering\small
-\caption{问题一预热阶段温度（$^\circ$C）}\label{tab:q1temp}
-\resizebox{\textwidth}{!}{\begin{tabular}{rrrrrr}\toprule 时间/s & 0 cm & 0.5 cm & 1 cm & 1.5 cm & 2 cm\\\midrule
-100&28.0001&28.0003&28.0040&28.0327&28.1801\\300&28.0408&28.0635&28.1514&28.3681&28.8489\\600&28.4533&28.5360&28.8039&29.3159&30.1652\\900&29.3243&29.4583&29.8755&30.6161&31.7304\\1200&30.5427&30.7098&31.2223&32.1126&33.4276\\1500&31.9957&32.1867&32.7660&33.7463&35.1203\\1800&33.5753&33.7720&34.3642&35.3621&36.7856\\\bottomrule\end{tabular}}\end{table}
-\begin{table}[H]\centering\small
-\caption{问题一预热阶段含水率（kg/kg）}\label{tab:q1moisture}
-\resizebox{\textwidth}{!}{\begin{tabular}{rrrrrr}\toprule 时间/s & 0 cm & 0.5 cm & 1 cm & 1.5 cm & 2 cm\\\midrule
-100&2.5500&2.5500&2.5500&2.5500&2.2470\\300&2.5500&2.5500&2.5500&2.5492&2.0508\\600&2.5500&2.5500&2.5500&2.5353&1.8770\\900&2.5500&2.5500&2.5497&2.5045&1.7547\\1200&2.5500&2.5500&2.5482&2.4646&1.6586\\1500&2.5500&2.5499&2.5445&2.4206&1.5787\\1800&2.5500&2.5497&2.5383&2.3755&1.5102\\\bottomrule\end{tabular}}\end{table}
-表 1 和表 2 的原始数据分别见 \texttt{results/q1/table1.csv} 与 \texttt{results/q1/table2.csv}；图~\ref{fig:q1profiles}展示典型时刻的径向分布。
+图~\ref{fig:q1-3d-cylinder} 左侧以立体剖面表示圆柱药材和径向坐标，右侧区分真实表面状态 $(T_s,C_s)$ 与烘房输入 $(T_\infty,C_e)$。红、蓝箭头分别表示热量和水分的边界交换方向；该图是模型结构示意，不代表计算得到的温度或含水率场。
 
-数值复核中，2048 到 4096 单元的工作簿网格最大变化为 $1.504\times10^{-7}\,\mathrm K$（温度）和 $2.851\times10^{-5}\,\mathrm{kg/kg}$（含水率）；收紧时间设置后的最大变化分别为 $1.537\times10^{-7}\,\mathrm K$ 和 $2.950\times10^{-9}\,\mathrm{kg/kg}$。独立圆柱热方程基准的最大温度偏差为 $1.804\times10^{-7}\,\mathrm K$，说明当前条件模型下离散实现稳定。
+
+\subsubsection{控制方程：能量 + 水分双偏微方程}\label{subsec:q1-governing}
+
+采用2.3.1径向模型，温度与含水率\textbf{仅}依赖\textbf{径向坐标与时间}，即建立径向坐标系，使用“本构定律 + 守恒律”进行推导。记为温度$T(r,t)$ 、干基含水率为$C(r,t)$，$r\in[0,2]cm$，$t\in[0,1800]s$。将附件1给出的环境水分浓度 $C_e(t)$ 解释为药材表面的有效平衡含水率（题面数据不足条件下的\textbf{基线选择}）；\textbf{不额外引入潜热项}。
+
+根据一般径向\textbf{输运方程}：在能量方程中，守恒量为微元显热，热量输运遵循\textbf{傅里叶定律} $q=-k\,\partial T/\partial r$。预热阶段无内热源，取附录2参数代入输运方程得\eqref{eq:q1-heat}；在水分方程中，守恒量取干基 u 相对量，输运遵循\textbf{菲克定律}，带入化简得\eqref{eq:q1-mass}。
+
+
+
+
+\begin{equation}
+\rho c_p\frac{\partial T}{\partial t}=\frac{1}{r}\frac{\partial}{\partial r}\!\left(rk\frac{\partial T}{\partial r}\right),
+\label{eq:q1-heat}
+\qquad 0<r<R.
+\end{equation}
+
+\begin{equation}
+\frac{\partial C}{\partial t}=\frac{1}{r}\frac{\partial}{\partial r}\!\left(rD(C)\frac{\partial C}{\partial r}\right),
+\qquad
+D(C)=7\times10^{-9}\exp\!\left(-\frac{0.89}{C}\right).
+\label{eq:q1-mass}
+\end{equation}
+
+\vspace{2em}
+
+
+两方程不含公共变量，在问题一中相互解耦、可分别求解；\textbf{该解耦结构亦为问题二的耦合效应分析提供对照思路}。
+
+\subsubsection{定解条件与Robin 换热与传质边界}
+
+中心由对称性给出零梯度条件
+\begin{equation}
+\left.\frac{\partial T}{\partial r}\right|_{r=0}=\left.\frac{\partial C}{\partial r}\right|_{r=0}=0;
+\label{eq:q1-center}
+\end{equation}
+表面通过换热与传质同烘房环境交换能量与水分，\textbf{采用 Robin 边界}
+\begin{equation}
+-k\left.\frac{\partial T}{\partial r}\right|_{r=R}=h\left[T_s-T_\infty(t)\right],
+\qquad h=25\,\mathrm{W/(m^2\cdot K)},
+\label{eq:q1-robinT}
+\end{equation}
+\begin{equation}
+-D(C_s)\left.\frac{\partial C}{\partial r}\right|_{r=R}=k_m\left[C_s-C_e(t)\right],
+\qquad k_m=8\times10^{-7}\,\mathrm{m/s},
+\label{eq:q1-robinC}
+\end{equation}
+其中 $T_s$、$C_s$ 为真实表面值。初始条件为
+T(r,0)=301.15K，C(r,0)=2.55kg/kg。
+
+附件~1 数据经分段线性插值后作为 $T_\infty(t)$、$C_e(t)$ 进入边界条件。式\eqref{eq:q1-heat}、\eqref{eq:q1-mass} 连同上述定解条件构成两个相互独立的抛物型定解问题，可分别求解。
+
+
+\newpage
+\subsection{模型求解}
+
+\subsubsection{圆柱环形有限体积 “离散”}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{../figures/q1/fig_q1_3d_control_volume.pdf}
+\caption{问题一环形有限体积控制体与共享界面通量示意}
+\label{fig:q1-3d-fvm}
+\end{figure}
+
+图~\ref{fig:q1-3d-fvm} 左侧展示沿径向嵌套的环形控制体，右侧将相邻单元及其界面通量展开；红色和蓝色箭头分别对应热通量 $q$ 与水分通量 $j$，箭头均按 $+r$ 方向定义。该图用于说明离散几何与守恒记账，不表示某一时刻的数值场。
+
+将 $[0,R]$ 均分为 $N$ 个环形控制体，$\Delta r=R/N$，第 $i$ 个控制体的两界面为 $r_{i\pm1/2}$。对式\eqref{eq:q1-heat}、\eqref{eq:q1-mass} 在控制体上积分，圆柱面积因子 $r$ 自动进入几何权重（约去公共因子 $2\pi L$）
+\begin{equation}
+V_i=\frac{r_{i+1/2}^2-r_{i-1/2}^2}{2},
+\label{eq:q1-weight}
+\end{equation}
+得到半离散格式
+\begin{equation}
+\rho c_pV_i\frac{\mathrm{d}T_i}{\mathrm{d}t}=r_{i-1/2}q_{i-1/2}-r_{i+1/2}q_{i+1/2},
+\qquad
+V_i\frac{\mathrm{d}C_i}{\mathrm{d}t}=r_{i-1/2}j_{i-1/2}-r_{i+1/2}j_{i+1/2}.
+\label{eq:q1-fvm}
+\end{equation}
+其中 $q=-kT_r$、$j=-D(C)C_r$ 为沿 $+r$ 方向的热流与水分通量。该写法有\textbf{两大优点}：其一，中心界面 $r_{1/2}$处\textbf{通量自动为零}，\textbf{避免在 $r=0$ 显式处理奇异项}；其二，同一界面通量以相反符号进入相邻两个控制体，热量与水分在离散层面\textbf{严格守恒}。其中：
+
+\begin{itemize}
+    \item \textbf{热通量q的界面导热系数取调和平均}（本问 $k$ 为常数，调和平均退化为 $k$ 本身，该取法为问题二的变系数情形\textbf{预置}。）
+\begin{equation}
+k_{i+1/2}=\frac{2k_ik_{i+1}}{k_i+k_{i+1}},
+\qquad
+q_{i+1/2}=-k_{i+1/2}\frac{T_{i+1}-T_i}{\Delta r},
+\label{eq:q1-fluxT}
+\end{equation}
+
+    \item \textbf{水分通量j取“Kirchhoff”变换。}
+然而，若对 $D(C)$ 取相邻单元的算术平均，在近表层\textbf{水分浓度梯度较大}时会引入通量偏差。注意到被积项可以精确积分，引入经典 Kirchhoff 变换
+\begin{equation}
+K(C)=\int_0^C\exp\!\left(-\frac{a}{s}\right)\mathrm{d}s
+=C\exp\!\left(-\frac{a}{C}\right)+a\,\operatorname{Ei}\!\left(-\frac{a}{C}\right),
+\qquad a=0.89,
+\label{eq:q1-K}
+\end{equation}
+由 $K'(C)=\exp(-a/C)$ 得 $D(C)\,C_r=7\times10^{-9}\,K(C)_r$，于是内部水分通量具有线性差分形式
+\begin{equation}
+j_{i+1/2}=-7\times10^{-9}\,\frac{K(C_{i+1})-K(C_i)}{\Delta r},
+\label{eq:q1-fluxC}
+\end{equation}
+它对任意浓度梯度精确成立，而方程的非线性本身仍被完整保留——因为时间项与边界条件均由状态 $C$ 决定。
+
+
+\end{itemize}
+
+
+\subsubsection{表面半控制体与 Robin 边界的联立求解}
+
+边界处理是此类问题的主要误差来源：最外层单元中心并不等于真实表面。本文对最外半个控制体（厚度 $\Delta r/2$）积分，将真实表面值 $C_s$ 作为独立未知量，由半控制体内的水分收支，内部扩散通量与表面对流通量相等：
+\begin{equation}
+7\times10^{-9}\left[K(C_N)-K(C_s)\right]=\frac{\Delta r}{2}\,k_m\left[C_s-C_e(t)\right],
+\label{eq:q1-surfaceC}
+\end{equation}
+这是关于 $C_s$ 的非线性标量方程，用带区间保护的 Brent 方法求根。温度边界则将半单元导热热阻与表面对流热阻串联：
+\begin{equation}
+q_R=\frac{T_N-T_\infty(t)}{\Delta r/(2k)+1/h},
+\qquad
+T_s=T_\infty(t)+\frac{q_R}{h},
+\label{eq:q1-surfaceT}
+\end{equation}
+其中通量以 $+r$ 方向为正，加热时 $q_R<0$。式\eqref{eq:q1-surfaceC}、\eqref{eq:q1-surfaceT} 使边界通量与内部离散采用同一套定义，避免了把边界条件作为独立变量强行赋值，其残差可逐时刻核验。
+
+\subsubsection{BDF 隐式时间积分与连续场重构}
+
+空间离散后得到刚性常微分方程组。由于水分扩散与热扩散时间尺度相差约 34倍，显式格式步长会被较快的导热过程限制，故采用 BDF 隐式积分，使步长由精度控制而非稳定性约束。为处理附件 1的分段线性环境输入，在每个 60 s 区间内分段推进，逐秒输出由稠密插值获得。数值主解取 N=4096个控制体。
+
+采样位置一般不落在控制体中心，需从离散解重构连续场：温度直接重构；含水率在 Kirchhoff 空间重构后反解，避免强非线性区插值失真。中心采用偶对称外推，内部用单调分段三次插值，中心斜率为零、表面斜率由边界通量恢复，以抑制边界振荡。 t=0直接返回题设均匀初值。
+
+综上，问题一的算法流程为：读取附件~1 与附录~2 参数并插值 $\to$ 生成径向控制体并赋初值 $\to$ 在每个 $60\,\mathrm{s}$ 区间内以 BDF 推进（右端依次计算通量\eqref{eq:q1-fluxT}、\eqref{eq:q1-fluxC} 与边界\eqref{eq:q1-surfaceC}、\eqref{eq:q1-surfaceT}）$\to$ 按题设时空网格重构采样、导出 \texttt{result1.xlsx} $\to$ 执行加密与独立基准检验。
+
+\subsection{结果与分析}
+
+按上述模型求解得到预热阶段温度场与水分浓度场的完整演化，逐秒、每 $0.1\,\mathrm{cm}$ 的结果已导出至 \texttt{result1.xlsx}（温度、水分浓度各一张工作表，均保留四位小数）。题设要求的典型时刻与位置结果见表~\ref{tab:q1-T}、表~\ref{tab:q1-C}。
+
+\begin{table}[htbp]
+\centering
+\caption{预热阶段不同位置的温度（$^\circ$C）}
+\label{tab:q1-T}
+\begin{tabular}{cccccc}
+\toprule
+时间/s & 0 cm & 0.5 cm & 1 cm & 1.5 cm & 2 cm \\
+\midrule
+100  & 28.0001 & 28.0003 & 28.0040 & 28.0327 & 28.1801 \\
+300  & 28.0408 & 28.0635 & 28.1514 & 28.3681 & 28.8489 \\
+600  & 28.4533 & 28.5360 & 28.8039 & 29.3159 & 30.1652 \\
+900  & 29.3243 & 29.4583 & 29.8755 & 30.6161 & 31.7304 \\
+1200 & 30.5427 & 30.7098 & 31.2223 & 32.1126 & 33.4276 \\
+1500 & 31.9957 & 32.1867 & 32.7660 & 33.7463 & 35.1203 \\
+1800 & 33.5753 & 33.7720 & 34.3642 & 35.3621 & 36.7856 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+由表~\ref{tab:q1-T}，温度自表面向中心逐层滞后：$t=100\,\mathrm{s}$ 时升温尚局限于表层（$2\,\mathrm{cm}$ 处仅升高 $0.18\,^\circ\mathrm{C}$）；至 $1800\,\mathrm{s}$，表面已达 $36.79\,^\circ\mathrm{C}$，而中心仅 $33.58\,^\circ\mathrm{C}$，内外温差仍有 $3.21\,^\circ\mathrm{C}$。这与 $\mathrm{Bi}_T\approx1.39$ 的预判一致——预热结束时远未达到径向热平衡，``预热平衡''应理解为烘房环境达到设定工况，而非药材内部温度均匀。
+
+\begin{table}[htbp]
+\centering
+\caption{预热阶段不同位置的水分浓度（kg/kg）}
+\label{tab:q1-C}
+\begin{tabular}{cccccc}
+\toprule
+时间/s & 0 cm & 0.5 cm & 1 cm & 1.5 cm & 2 cm \\
+\midrule
+100  & 2.5500 & 2.5500 & 2.5500 & 2.5500 & 2.2470 \\
+300  & 2.5500 & 2.5500 & 2.5500 & 2.5492 & 2.0508 \\
+600  & 2.5500 & 2.5500 & 2.5500 & 2.5353 & 1.8770 \\
+900  & 2.5500 & 2.5500 & 2.5497 & 2.5045 & 1.7547 \\
+1200 & 2.5500 & 2.5500 & 2.5482 & 2.4646 & 1.6586 \\
+1500 & 2.5500 & 2.5499 & 2.5445 & 2.4206 & 1.5787 \\
+1800 & 2.5500 & 2.5497 & 2.5383 & 2.3755 & 1.5102 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+表~\ref{tab:q1-C} 显示水分迁移的空间滞后更为显著：$t=100\,\mathrm{s}$ 时仅表层含水率明显下降（$2\,\mathrm{cm}$ 处已降至 $2.2470$），$1.5\,\mathrm{cm}$ 以内几乎未动；至 $1800\,\mathrm{s}$ 表面降至 $1.5102\,\mathrm{kg/kg}$，中心仍维持初值 $2.5500$。$1800\,\mathrm{s}$ 时中心—表面含水率差 $\Delta C=1.0398\,\mathrm{kg/kg}$、中心—表面温差 $\Delta T=3.21\,^\circ\mathrm{C}$——两个差值单位不同、不能相互比较大小，但共同说明表面已先响应环境而中心滞后，梯度高度集中于近表面薄层。这正是 $\tau_C\approx8.1\times10^4\,\mathrm{s}\gg1800\,\mathrm{s}$ 的直接体现，也说明以平均含水率代替全场分布会造成显著失真。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1\textwidth]{../figures/q1/q1_profiles.pdf}
+\caption{预热阶段不同时刻的径向温度与含水率剖面}
+\label{fig:q1-profiles}
+\end{figure}
+
+表格仅列出五个半径位置，图~\ref{fig:q1-profiles} 给出完整径向剖面：温度与含水率均沿半径单调分布，表层响应始终领先于中心，且梯度层随时间不断加深，验证了以径向分布而非平均状态描述预热过程的必要性。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1\textwidth]{../figures/q1/q1_history.pdf}
+\caption{中心、内部位置与表面的温度和含水率随时间的变化}
+\label{fig:q1-history}
+\end{figure}
+
+图~\ref{fig:q1-history} 进一步将空间剖面转化为时间响应：表面首先响应烘房环境变化，中心响应存在明显滞后；该滞后来自有限热扩散速率与非线性水分扩散本身，而非输出采样步长造成的假象。
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=1\textwidth]{../figures/q1/q1_spatiotemporal_heatmaps.pdf}
+\caption{q1热力图}
+\label{fig:q1_spatiotemporal_heatmaps}
+\end{figure}
