@@ -201,6 +201,7 @@
   "figures": [
     "q4_convergence.pdf",
     "q4_mechanism_comparison.pdf",
+    "q4_shrink_event_combined.pdf",
     "q4_shrink_profiles.pdf",
     "q4_threshold_event.pdf"
   ]

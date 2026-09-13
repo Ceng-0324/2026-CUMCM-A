@@ -39,10 +39,11 @@ t_*=51.09216535\,\mathrm{h}=183931.795\,\mathrm{s}.
 
 ## 图件
 
-- 图 1 连续域最大含水率与阈值事件：[`../../figures/q4/q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf)。
-- 图 2 收缩过程中事件前后实际半径剖面：[`../../figures/q4/q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf)。
-- 图 3 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
-- 图 4 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
+- 图 1（左右组合图）连续域最大含水率事件与事件前/达标时刻实际半径剖面：[`../../figures/q4/q4_shrink_event_combined.pdf`](../../figures/q4/q4_shrink_event_combined.pdf)。
+- 图 2 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
+- 图 3 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
+
+组合图对应的原始单面板图 [`q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf) 和 [`q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf) 仍保留，但正文优先使用组合图。
 
 ## 数值验证与边界
 

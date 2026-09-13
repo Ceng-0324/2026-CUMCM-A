@@ -170,6 +170,36 @@ def plot_figures(figures_dir, event, solution, convergence, mechanism):
     ax.set(xlabel="实际到中心距离/cm", ylabel="含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(figures_dir / "q4_shrink_profiles.pdf", format="pdf"); plt.close(fig)
 
+    # 论文主文使用的左右组合图：左侧保留全域达标事件，右侧展示收缩前后剖面。
+    # 两个面板直接由同一正式事件和解对象绘制，避免先栅格化再拼接 PDF 造成字体与线宽不一致。
+    fig, (ax_event, ax_profile) = plt.subplots(1, 2, figsize=(11.2, 4.2),
+                                                 gridspec_kw={"wspace": 0.30})
+    ax_event.plot(event["scan_times_s"] / 3600, event["scan_max_moisture"],
+                  color="#2F4B7C", lw=1.8, label="连续域最大含水率")
+    ax_event.axhline(THRESHOLD, color="#B2182B", ls="--", lw=1.2,
+                     label="阈值 0.15 kg/kg")
+    ax_event.axvline(event["event_time_h"], color="#444444", ls=":", lw=1.2,
+                     label=f"达标时刻 {event['event_time_h']:.4f} h")
+    ax_event.set(xlabel="时间 / h", ylabel="最大含水率 / (kg/kg)")
+    ax_event.grid(alpha=.22); ax_event.legend(frameon=False, fontsize=8, loc="best")
+    ax_event.set_title("(a) 全域达标事件", fontsize=11)
+
+    for t, color in [(max(0.0, event["event_time_s"] - 6 * 3600), "#4C78A8"),
+                     (event["event_time_s"], "#D62728")]:
+        xi = np.linspace(0, 1, 513)
+        c = solution.sample([t], xi, coordinate="material").moisture[0]
+        radius = solution.model.radius(t)
+        ax_profile.plot(xi * radius * 100, c, color=color, lw=1.8,
+                        label=f"{t/3600:.4f} h")
+    ax_profile.axhline(THRESHOLD, color="#B2182B", ls="--", lw=1.2,
+                       label="阈值 0.15 kg/kg")
+    ax_profile.set(xlabel="实际到中心距离 / cm", ylabel="含水率 / (kg/kg)")
+    ax_profile.grid(alpha=.22); ax_profile.legend(frameon=False, fontsize=8, loc="best")
+    ax_profile.set_title("(b) 事件前与达标时刻剖面", fontsize=11)
+    fig.savefig(figures_dir / "q4_shrink_event_combined.pdf", format="pdf",
+                bbox_inches="tight")
+    plt.close(fig)
+
     # 单面板机制路径图：以基准到正式组合的路径展示各效应贡献。
     effects = mechanism["effects"]
     base = effects["baseline_fixed_appendix3_h"]
@@ -279,10 +309,11 @@ t_*={e['event_time_h']:.8f}\,\mathrm{{h}}={e['event_time_s']:.3f}\,\mathrm{{s}}.
 
 ## 图件
 
-- 图 1 连续域最大含水率与阈值事件：[`../../figures/q4/q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf)。
-- 图 2 收缩过程中事件前后实际半径剖面：[`../../figures/q4/q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf)。
-- 图 3 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
-- 图 4 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
+- 图 1（左右组合图）连续域最大含水率事件与事件前/达标时刻实际半径剖面：[`../../figures/q4/q4_shrink_event_combined.pdf`](../../figures/q4/q4_shrink_event_combined.pdf)。
+- 图 2 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
+- 图 3 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
+
+组合图对应的原始单面板图 [`q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf) 和 [`q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf) 仍保留，但正文优先使用组合图。
 
 ## 数值验证与边界
 

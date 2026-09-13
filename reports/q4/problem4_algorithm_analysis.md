@@ -55,8 +55,7 @@ M(t)=\max_{0\le\xi\le1}C_h(\xi,t),\qquad t_*:\ M(t_*)=0.15.
 
 **图件插入位置：** 表 6 后依次插入：
 
-- [`../../figures/q4/q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf)：连续最大含水率与阈值事件；
-- [`../../figures/q4/q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf)：事件前后实际半径剖面；
+- [`../../figures/q4/q4_shrink_event_combined.pdf`](../../figures/q4/q4_shrink_event_combined.pdf)：左右组合图，左侧为连续最大含水率与阈值事件，右侧为事件前后实际半径剖面；
 - [`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)：空间网格收敛。
 
 四组合机制结果见结果报告，论文可用以说明收缩几何与整组物性变化存在竞争，不能只归因于扩散率。

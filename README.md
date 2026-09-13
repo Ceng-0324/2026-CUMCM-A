@@ -27,6 +27,7 @@ Q1–Q4 的正式结果工作簿、数值验证、数据图和方法正文稿已
 
 - 总体分析：[论文问题分析撰写稿](reports/论文问题分析.md)；表述与论证建议：[正文独特性提升](reports/uniqueness_enhancement.md)。
 - 模型检验：[四问模型检验方法汇总](reports/model_validation_methods.md)，集中整理收敛、守恒、边界残差、连续事件、敏感性和独立基准检验。
+- 模型假设：[模型假设与合理性说明](reports/model_assumptions.md)，逐条说明假设、理由、适用边界和可检验依据。
 - 数据组稿：[论文数据包](reports/PAPER_DATA_PACKAGE.md)；技术路线、递进关系和方法图的插入建议：[图示报告](reports/DRAWIO_REPORT.md)。
 - 参考文献：[四问引用文献指南](reports/references_by_question.md)，按问题查找中文优先文献、引用位置及期刊索引依据。
 - 论文工程：[LaTeX 组稿入口](paper/README.md)，正文、图件插入和参考文献初稿集中在 `paper/`。
