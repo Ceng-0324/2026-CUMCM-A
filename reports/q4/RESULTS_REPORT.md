@@ -43,7 +43,7 @@ t_*=51.09216535\,\mathrm{h}=183931.795\,\mathrm{s}.
 - 图 2 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
 - 图 3 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
 
-组合图对应的原始单面板图 [`q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf) 和 [`q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf) 仍保留，但正文优先使用组合图。
+正文仅保留左右组合图，原先的两个单面板中间产物已删除。
 
 ## 数值验证与边界
 

@@ -153,24 +153,7 @@ def plot_figures(figures_dir, event, solution, convergence, mechanism):
     configure_plotting(ROOT)
     plt.rcParams.update({"font.sans-serif": ["STHeiti", "PingFang SC", "Hiragino Sans GB", "DejaVu Sans"],
                          "axes.unicode_minus": False})
-    fig, ax = plt.subplots(figsize=(7, 4))
-    ax.plot(event["scan_times_s"] / 3600, event["scan_max_moisture"], label="连续域最大含水率")
-    ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值 0.15 kg/kg")
-    ax.axvline(event["event_time_h"], color="#444", ls=":", label=f"达标时刻 {event['event_time_h']:.4f} h")
-    ax.set(xlabel="时间/h", ylabel="最大含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q4_threshold_event.pdf", format="pdf"); plt.close(fig)
-
-    fig, ax = plt.subplots(figsize=(7, 4))
-    for t in [max(0.0, event["event_time_s"] - 6 * 3600), event["event_time_s"]]:
-        xi = np.linspace(0, 1, 513)
-        c = solution.sample([t], xi, coordinate="material").moisture[0]
-        radius = solution.model.radius(t)
-        ax.plot(xi * radius * 100, c, label=f"{t/3600:.4f} h")
-    ax.axhline(THRESHOLD, color="#b33", ls="--", label="阈值")
-    ax.set(xlabel="实际到中心距离/cm", ylabel="含水率/(kg/kg)"); ax.grid(alpha=.25); ax.legend(frameon=False)
-    fig.tight_layout(); fig.savefig(figures_dir / "q4_shrink_profiles.pdf", format="pdf"); plt.close(fig)
-
-    # 论文主文使用的左右组合图：左侧保留全域达标事件，右侧展示收缩前后剖面。
+    # 论文主文使用的左右组合图：左侧展示全域达标事件，右侧展示收缩前后剖面。
     # 两个面板直接由同一正式事件和解对象绘制，避免先栅格化再拼接 PDF 造成字体与线宽不一致。
     fig, (ax_event, ax_profile) = plt.subplots(1, 2, figsize=(11.2, 4.2),
                                                  gridspec_kw={"wspace": 0.30})
@@ -313,7 +296,7 @@ t_*={e['event_time_h']:.8f}\,\mathrm{{h}}={e['event_time_s']:.3f}\,\mathrm{{s}}.
 - 图 2 事件时刻的空间网格收敛：[`../../figures/q4/q4_convergence.pdf`](../../figures/q4/q4_convergence.pdf)。
 - 图 3 四组合机制对比：[`../../figures/q4/q4_mechanism_comparison.pdf`](../../figures/q4/q4_mechanism_comparison.pdf)。
 
-组合图对应的原始单面板图 [`q4_threshold_event.pdf`](../../figures/q4/q4_threshold_event.pdf) 和 [`q4_shrink_profiles.pdf`](../../figures/q4/q4_shrink_profiles.pdf) 仍保留，但正文优先使用组合图。
+正文仅保留左右组合图，原先的两个单面板中间产物已删除。
 
 ## 数值验证与边界
 

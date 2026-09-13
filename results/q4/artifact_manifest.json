@@ -2,13 +2,11 @@
   "files": {
     "results/q4/result4.xlsx": "7b59f75b4fac9ee01d787f6bbff8b6c3f9fcdd5cb55bc4575736b4db276af9b0",
     "results/q4/fields.npz": "adf1e340ddfda66351cf32cbf0c493d175e5788770747a2a47a4052737b772a0",
-    "results/q4/summary.json": "58f8c198eb1d62cfc334166f633bcb6d275a36a2a09d154b4ea885266f00124c",
+    "results/q4/summary.json": "565305bf37ecde100c117410fed6c90627ce6fcde863672a15a1622c8c1c9a72",
     "results/q4/table6.csv": "51efdbadcfcc2bfde38b46ec1f5b065b54271eee8c8030c4bf52895eee967538",
-    "figures/q4/q4_convergence.pdf": "40ce5de80aa29ed5572eafa647c6f2904179b7d431d598de83ddf53327a09b33",
-    "figures/q4/q4_mechanism_comparison.pdf": "6a79c29f5a28eb17d3bd4b4e0b9615b0be3de91b044fd754d00b9bef473a09ff",
-    "figures/q4/q4_shrink_profiles.pdf": "94eedfd8c1eaae95cfc57ed2bec3f38340c2027fbc813c7a62ec6dcc7893bcc7",
-    "figures/q4/q4_threshold_event.pdf": "9ea7013f4fc7ed125665cf286a3bccc165cb86b3317b2ef936b4a87cc938694f",
-    "figures/q4/q4_shrink_event_combined.pdf": "d4727bffb7724dcd143afd875d940dc5d36da3548578ae5e73842cec54f7179f",
+    "figures/q4/q4_convergence.pdf": "a254640822fe2da0fca5d9078abf047ae2a4eadf4820188722f3f513adf628b6",
+    "figures/q4/q4_mechanism_comparison.pdf": "f8fcd1093de7ff8cba49060595be92354686d8c93120674976cf56a87a0d82d9",
+    "figures/q4/q4_shrink_event_combined.pdf": "506831ce2db9ad0d295cf32b78c460334fe7b558485365bcc7d0b2eb4ef183f4",
     "results/q4/validation_sensitivity.json": "cae7fd9859c14d3e7b3e1ddee66d4b6756979be5e10f923e5ed0f08ab44991a9"
   }
 }

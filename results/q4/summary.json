@@ -16,8 +16,8 @@
     },
     "code_sha256": {
       "code/common/data_io.py": "a17b911376b54d2a19ddf99963d640bd62771a5d1fe937d2161b2e3e457b73a5",
-      "code/common/model.py": "db98497e445b7f54e754bace42cc754317f53f0d66bbb067824dfca1912af1b7",
-      "code/q4/problem4.py": "8666fdb32475712b07a4c1d36042edd27617b1f211d1228ca18b1fdaa65257b0"
+      "code/common/model.py": "53fdfb36489fa1c5e896791a30d5e137d921ed26773dfaf7e422cf084472c001",
+      "code/q4/problem4.py": "09237010514c947c054d545c4969b1ba1d160f100c841d7e81ca1773bfbbe418"
     }
   },
   "configuration": {
@@ -201,8 +201,6 @@
   "figures": [
     "q4_convergence.pdf",
     "q4_mechanism_comparison.pdf",
-    "q4_shrink_event_combined.pdf",
-    "q4_shrink_profiles.pdf",
-    "q4_threshold_event.pdf"
+    "q4_shrink_event_combined.pdf"
   ]
 }
